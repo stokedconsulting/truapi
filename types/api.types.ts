@@ -101,6 +101,7 @@ export type GetTransfersResponse = {
 }
 
 export type GetBalancesResponse = {
+    [key: string]: number;
     usdc: number,
     eth: number,
     cbeth: number,

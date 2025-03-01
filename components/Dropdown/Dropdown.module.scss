@@ -1,0 +1,110 @@
+.select {
+    // --select-width: 100%;
+    position: relative;
+    width: var(--select-width);
+    user-select: none;
+
+    &Header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 300;
+        overflow: hidden;
+        background: #FFFFFF;
+        border: 1px solid #CDCDCD;
+        border-radius: 8px;
+        min-width: 120px;
+
+        &Selected {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            overflow: hidden;
+
+            .selectIcon {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                width: 100%;
+            }
+        }
+    }
+
+    &Placeholder {
+        color: #888;
+    }
+
+    &Arrow {
+        font-size: 12px;
+        transition: transform 0.3s;
+
+        img {
+            max-width: 16px;
+        }
+
+        &.open {
+            transform: rotate(180deg);
+        }
+    }
+
+    &Dropdown {
+        position: absolute;
+        z-index: 4 !important;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        overflow-y: hidden;
+        margin-top: 5px;
+        background: #FFFFFF;
+        border: 1px solid #CDCDCD;
+        border-radius: 8px;
+
+
+        max-height: 0px;
+        visibility: hidden;
+        opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
+
+        &.open {
+            max-height: 150px;
+            visibility: visible;
+            opacity: 1;
+            overflow-y: scroll;
+            transition: max-height 0.5s ease, opacity 0.5s ease, visibility 0s 0s;
+        }
+
+        &:not(.open) {
+            transition: max-height 0.5s ease, opacity 0.5s ease, visibility 0s 0.5s;
+        }
+    }
+
+    &Option {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: background-color 0.2s;
+        z-index: 10;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .selectOptionIcon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+    }
+}

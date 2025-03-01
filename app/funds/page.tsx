@@ -1,5 +1,6 @@
 import styles from "./Funds.module.scss";
 import UsdcIcon from "../../public/assets/icons/usdc.svg";
+import TradeIcon from "../../public/assets/icons/trade.svg";
 import QrIcon from "../../public/assets/icons/qr.svg";
 import PayIcon from "../../public/assets/icons/pay.svg";
 import ActionCard from "@/components/ActionCard";
@@ -29,6 +30,13 @@ const actionCardItems = [
         action: "Buy",
         url: "/funds/onramp",
         badge: <Image src={"/assets/coinbase-onramp-badge.png"} alt="coinbase onramp" width={108} height={28} />
+    },
+    {
+        icon: <TradeIcon />,
+        title: "Trade Funds",
+        description: "Swap Currencies",
+        action: "Swap",
+        url: "/funds/trade"
     },
     {
         icon: <QrIcon />,

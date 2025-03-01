@@ -1,0 +1,118 @@
+@import "../../../styles/variables.scss";
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        gap: 20px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 10px;
+        width: 100%;
+        max-width: 500px;
+
+        .selectionContainer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #E2E2E2;
+            border-radius: 10px;
+
+            &.tradeIn {
+                background-color: #FAFAFA;
+            }
+
+            .left {
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                justify-content: center;
+                gap: 10px;
+
+                .title {
+                    color: $gray-dark;
+                }
+
+                input {
+                    font-size: 24px;
+                    font-weight: 500;
+                    border: none;
+                    outline: none;
+                    background: none;
+                    width: 100%;
+                }
+
+                .valueContainer {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: start;
+                    justify-content: center;
+                    font-size: 14px;
+                    color: $gray-medium
+                }
+            }
+
+            .right {
+                display: flex;
+                flex-direction: column;
+                align-items: end;
+                justify-content: center;
+                gap: 10px;
+
+                select {
+                    background: none;
+                }
+
+                .balanceContainer {
+                    display: flex;
+                    align-items: center;
+                    justify-content: end;
+                    gap: 10px;
+
+                    .value {
+                        color: $royalBlue;
+                    }
+                }
+            }
+        }
+
+        .primaryBttn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0051FF;
+            border: 0.5px solid #AAAAAA;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            padding: 15px;
+            width: 100%;
+            color: white;
+            transition-duration: 0.3s;
+
+            &:disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
+            &:hover {
+                opacity: 0.8;
+                transition-duration: 0.3s;
+            }
+        }
+    }
+}

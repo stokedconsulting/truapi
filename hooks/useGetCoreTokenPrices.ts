@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
+export type TokenPricesResponse = {
+    [key: string]: number,
+    usdc: number,
+    eth: number,
+    btc: number
+}
+
 // A simple function to fetch data from the Coinbase endpoint
 async function fetchPrices() {
     const response = await fetch("https://api.coinbase.com/v2/prices/usd/spot");
@@ -20,7 +27,7 @@ async function fetchPrices() {
         usdc: usdcObj ? parseFloat(usdcObj.amount) : undefined,
         eth: ethObj ? parseFloat(ethObj.amount) : undefined,
         btc: btcObj ? parseFloat(btcObj.amount) : undefined,
-    };
+    } as TokenPricesResponse;
 }
 
 export const useGetCoreTokenPrices = () => {
