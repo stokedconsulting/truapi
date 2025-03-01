@@ -46,3 +46,4 @@ cdp_api_key.json
 /.clerk/
 
 my-secret.key
+cdp_api_key-client.json

@@ -10,12 +10,13 @@ type ActionCardProps = {
         action: string,
         url: string,
         badge?: JSX.Element
-    }
+    },
+    className?: string
 }
 
-export default function ActionCard({ item }: ActionCardProps) {
+export default function ActionCard({ item, className }: ActionCardProps) {
     return (
-        <div className={styles.actionCard}>
+        <div className={`${styles.actionCard} ${className ? styles[className] : ""}`}>
             {item.badge && <div className={styles.badge}>
                 {item.badge}
             </div>}

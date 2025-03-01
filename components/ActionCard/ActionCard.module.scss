@@ -15,6 +15,10 @@
     max-width: 350px;
     position: relative;
 
+    &.column {
+        flex-direction: column;
+    }
+
     .badge {
         position: absolute;
         right: 0;
