@@ -1,0 +1,209 @@
+@import "../../../styles/variables.scss";
+
+.main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+
+    .formContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #FFFFFF;
+        border: 1px solid #E2E2E2;
+        border-radius: 10px;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        gap: 20px;
+
+        .balanceContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+
+            .value {
+                color: $royalBlue
+            }
+        }
+
+        h3 {
+            text-align: left;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .header {
+            border: 1px solid $gray-light;
+            padding: 5px 15px;
+            border-radius: 5px;
+            color: $gray-medium;
+        }
+
+        .formRows {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 20px;
+
+            .formTable {
+                width: 100%;
+                text-align: left;
+
+                th {
+                    padding-bottom: 10px;
+                }
+
+                td {
+                    padding-bottom: 10px;
+                }
+
+                .amountCell {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 10px;
+                }
+
+                td:first-child {
+                    padding-right: 10px;
+                }
+
+
+                th {
+                    font-weight: 300;
+                }
+
+                .inputContainer {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding: 10px;
+                    gap: 10px;
+                    background: #FFFFFF;
+                    border: 1px solid #CDCDCD;
+                    border-radius: 8px;
+                    width: 100%;
+
+                    input {
+                        border: none;
+                        outline: none;
+                        width: 100%;
+                    }
+                }
+            }
+
+            .row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .rowActions {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: start;
+                width: 100%;
+                gap: 20px;
+
+                .addBttn {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 5px 20px;
+                    gap: 10px;
+                    background: #0051FF;
+                    border-radius: 10px;
+                    color: white;
+                    font-size: 14px;
+                    transition-duration: 0.3s;
+
+                    &:hover {
+                        opacity: 0.8;
+                        transition-duration: 0.3s;
+                    }
+                }
+            }
+
+            .divider {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+                .hr {
+                    height: 2px;
+                    width: 100%;
+                    background-color: $gray-light;
+                }
+
+                span {
+                    color: $gray-medium;
+                    padding: 0px 20px
+                }
+            }
+
+            .secondaryBttn {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                padding: 5px 20px;
+                gap: 10px;
+                background: #FFFFFF;
+                border: 1px solid #E2E2E2;
+                border-radius: 10px;
+                transition-duration: 0.3s;
+
+                &:hover {
+                    background-color: $gray-light;
+                    transition-duration: 0.3s;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+            }
+
+            .primaryBttn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #0051FF;
+                border: 0.5px solid #AAAAAA;
+                border-radius: 10px;
+                border: none;
+                outline: none;
+                padding: 15px;
+                width: 100%;
+                color: white;
+                transition-duration: 0.3s;
+
+                &:disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+
+                &:hover {
+                    opacity: 0.8;
+                    transition-duration: 0.3s;
+                }
+            }
+        }
+    }
+}

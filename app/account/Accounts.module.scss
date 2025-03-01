@@ -1,0 +1,70 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
+    .profileCard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px;
+        gap: 10px;
+        background: #FFFFFF;
+        border: 1px solid #E2E2E2;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 400px;
+
+        img {
+            border-radius: 100%;
+        }
+
+        .name {
+            font-weight: 600;
+        }
+
+        .email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $gray-medium;
+            gap: 10px;
+        }
+
+        .valueRow {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+
+            .valueContainer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: row;
+                gap: 10px;
+                border: 1px solid $gray-light;
+                padding: 10px;
+                border-radius: 10px;
+                font-weight: 200;
+                text-wrap: nowrap;
+                // width: ;
+
+                .value {
+                    color: $royalBlue;
+                }
+            }
+
+            a {
+                text-decoration: none;
+                color: $royalBlue;
+            }
+        }
+    }
+}

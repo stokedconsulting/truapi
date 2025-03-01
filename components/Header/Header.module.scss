@@ -1,0 +1,46 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .welcome {
+        span {
+            color: $gray-medium;
+            font-size: 14px;
+        }
+    }
+
+    .chainInfo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        gap: 20px;
+        font-size: 16px;
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            gap: 10px;
+            border: 1px solid $gray-light;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 200;
+            text-wrap: nowrap;
+
+            .value {
+                color: $royalBlue;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: $royalBlue;
+        }
+    }
+}

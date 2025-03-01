@@ -1,0 +1,87 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+
+    .hero {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 50px;
+
+        .actionCardContainer {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            max-width: 350px;
+        }
+
+        .activityContainer {
+            flex: 7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            height: 100%;
+
+            .header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                gap: 10px;
+
+                .topRow {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+
+                    select {
+                        padding: 8px 20px;
+                        background: #FFFFFF;
+                        border: 1px solid #E2E2E2;
+                        border-radius: 10px;
+                        color: $gray-dark;
+                    }
+                }
+
+                .dataRow {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: start;
+                    width: 100%;
+                    gap: 40px;
+
+                    .dataItem {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: start;
+                        justify-content: start;
+
+                        .value {
+                            color: $royalBlue;
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .tableContainer {
+        width: 100%;
+    }
+}

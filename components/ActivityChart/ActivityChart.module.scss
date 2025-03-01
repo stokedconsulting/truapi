@@ -1,0 +1,35 @@
+@import "../../styles/variables.scss";
+
+.chartContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.timeframeSelector {
+    display: flex;
+    gap: 15px;
+
+    button {
+        padding: 8px 20px;
+        background: #FFFFFF;
+        border: 1px solid #E2E2E2;
+        border-radius: 10px;
+        color: $gray-dark;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        transition: background 0.2s ease;
+
+        &.active {
+            background: $royalBlue;
+            color: #fff;
+            border: none;
+        }
+
+        &:hover {
+            background: lighten($royalBlue, 40%);
+        }
+    }
+
+}

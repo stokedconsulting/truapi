@@ -1,0 +1,99 @@
+@import "../../styles/variables.scss";
+
+$table-border-color: #ddd;
+$primary-color: #007bff;
+
+.tableContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        text-wrap: nowrap;
+        gap: 30px;
+
+        .searchInput {
+            padding: 10px 20px;
+            width: 100%;
+            border: 1px solid $table-border-color;
+            border-radius: 4px;
+            max-width: 800px;
+            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-weight: 200;
+
+            &::placeholder {
+                color: $gray-light;
+                font-weight: 200;
+            }
+        }
+    }
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.table th {
+    font-size: 16px;
+    font-weight: 300;
+    background: linear-gradient(360deg, #FFFFFF 0%, #F7F7F7 100%);
+    cursor: pointer;
+}
+
+.table td {
+    font-weight: 200;
+    color: $gray-medium;
+}
+
+.table tbody tr:hover {
+    background-color: lighten($gray-light,8%);
+}
+
+.action-btn {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: lighten($gray-light,10%);
+    }
+}
+
+.pagination {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    button {
+        padding: 5px 10px;
+        border: none;
+        background-color: $primary-color;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+
+        &:disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+    }
+}

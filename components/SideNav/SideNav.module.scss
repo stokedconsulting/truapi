@@ -1,0 +1,71 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    width: fit-content;
+    padding: 20px;
+    background: $cardGradient;
+    color: $gray-medium;
+
+    .menu {
+
+        a {
+            text-decoration: none;
+            color: $gray-medium;
+
+            &:hover {
+                color: lighten($royalBlue, 30%);
+            }
+
+            &.active {
+                color: $royalBlue !important;
+            }
+        }
+
+        .menuItem {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            margin: 10px;
+            gap: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+
+            &.active {
+                color: $royalBlue;
+
+                svg {
+                    fill: $royalBlue;
+                }
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+
+        .footerItem {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            width: 100%;
+            margin: 10px;
+            gap: 10px;
+            cursor: pointer;
+
+            &:nth-child(2) {
+                color: $logoutRed;
+            }
+        }
+
+    }
+}
