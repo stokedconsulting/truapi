@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { createInvoice } from "../lib/api";
+import { createInvoice, updateInvoice } from "../lib/api";
 import { InvoiceItem } from "@/types/api.types";
 
 export const useCreateInvoice = (
@@ -9,14 +9,18 @@ export const useCreateInvoice = (
     email: string,
     dueDate: string,
     paymentCollection: "one-time" | "multi-use",
-    invoiceItems: InvoiceItem[]
+    invoiceItems: InvoiceItem[],
+    invoiceId?: string,
 ) => {
     const queryClient = useQueryClient();
     const { getToken } = useAuth();
 
     const mutation = useMutation({
         mutationFn: async (isDraft?: boolean) => {
-            return createInvoice((await getToken()) as string, { name, email, dueDate, paymentCollection, invoiceItems, isDraft });
+            if (invoiceId)
+                return updateInvoice((await getToken()) as string, { name, email, dueDate, paymentCollection, invoiceItems, isDraft, invoiceId });
+            else
+                return createInvoice((await getToken()) as string, { name, email, dueDate, paymentCollection, invoiceItems, isDraft });
         },
         onSuccess: async () => {
             try {
@@ -30,9 +34,9 @@ export const useCreateInvoice = (
     const _createInvoice = (isDraft?: boolean) => {
         const _promise = mutation.mutateAsync(isDraft);
         toast.promise(_promise, {
-            pending: "Creating invoice...",
-            success: "Invoice created successfully!",
-            error: "Invoice creation failed, please try again."
+            pending: `${invoiceId ? "Updating" : "Creating"} invoice...`,
+            success: `Invoice ${invoiceId ? "updated" : "created"} successfully!`,
+            error: `Invoice ${invoiceId ? "updation" : "creation"} failed, please try again.`
         });
     };
 

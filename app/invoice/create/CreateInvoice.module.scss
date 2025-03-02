@@ -27,6 +27,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            flex-wrap: wrap;
 
             .key {
                 color: $gray-medium
@@ -69,6 +70,13 @@
                     align-items: center;
                     justify-content: space-between;
                     gap: 10px;
+
+                    &:disabled {
+                        svg {
+                            opacity: 0.2;
+                            pointer-events: none;
+                        }
+                    }
                 }
             }
 
@@ -88,6 +96,11 @@
                 &:hover {
                     opacity: 0.8;
                     transition-duration: 0.3s;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
                 }
             }
         }

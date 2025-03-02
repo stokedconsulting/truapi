@@ -13,7 +13,9 @@ import {
     TradeAssetRequest,
     TradeAssetResponse,
     TransferAssetRequest,
-    TransferAssetResponse
+    TransferAssetResponse,
+    UpdateInvoiceRequest,
+    UpdateInvoiceResponse
 } from "../types/api.types";
 
 // ===============================
@@ -150,6 +152,24 @@ async function createInvoice(token: string, data: CreateInvoiceRequest): Promise
     return result;
 }
 
+async function updateInvoice(token: string, data: UpdateInvoiceRequest): Promise<UpdateInvoiceResponse> {
+    const response = await fetch(`/api/invoice`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to update invoice: ${response.statusText}`);
+    }
+
+    const result = (await response.json()) as UpdateInvoiceResponse;
+    return result;
+}
+
 async function getUserInvoices(token: string, invoiceId?: string): Promise<GetUserInvoicesResponse> {
     const url = new URL(`/api/invoice`, window.location.origin);
     if (invoiceId)
@@ -214,6 +234,7 @@ export {
     getTransfers,
     getBalances,
     createInvoice,
+    updateInvoice,
     getUserInvoices,
     createCheckoutSession,
     getCheckoutSession

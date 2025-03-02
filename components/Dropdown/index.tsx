@@ -13,9 +13,10 @@ type DropdownProps = {
     selected: OptionType;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (option: any) => void;
+    disabled?: boolean
 };
 
-const Dropdown: React.FC<DropdownProps> = ({ options, selected, onChange }) => {
+const Dropdown: React.FC<DropdownProps> = ({ options, selected, onChange, disabled = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +41,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onChange }) => {
     }, []);
 
     return (
-        <div className={styles.select} ref={dropdownRef}>
+        <div className={`${styles.select} ${disabled ? styles.disabled : ""}`} ref={dropdownRef}>
             <div
                 className={styles.selectHeader}
                 onClick={() => setIsOpen(!isOpen)}

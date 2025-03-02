@@ -124,6 +124,18 @@ export type CreateInvoiceRequest = {
 
 export type CreateInvoiceResponse = InvoiceDocument;
 
+export type UpdateInvoiceRequest = {
+    name: string,
+    email: string,
+    dueDate: string,
+    paymentCollection: "one-time" | "multi-use",
+    invoiceItems: InvoiceItem[],
+    isDraft?: boolean,
+    invoiceId: string
+}
+
+export type UpdateInvoiceResponse = InvoiceDocument;
+
 export type GetUserInvoicesResponse = InvoiceDocument[];
 
 export type CreateCheckoutSessionRequest = {

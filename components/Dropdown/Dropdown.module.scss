@@ -5,6 +5,10 @@
     user-select: none;
     width: 100%;
 
+    &.disabled {
+        pointer-events: none;
+    }
+
     &Header {
         display: flex;
         justify-content: space-between;

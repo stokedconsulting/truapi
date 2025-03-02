@@ -7,8 +7,6 @@ import { createWallet, listenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import mongoose from 'mongoose'
 
-// @todo - PUT route to update existing draft or existing (unpaid) invoice | if existing then void previous and make new 
-
 export async function POST(request: NextRequest) {
     try {
         const { userId } = getAuth(request)
@@ -82,3 +80,75 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
+
+export async function PUT(request: NextRequest) {
+    try {
+        const { userId } = getAuth(request)
+        if (!userId)
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+        await connectToDatabase()
+
+        const user = await UserModel.findOne({ userId })
+        if (!user)
+            return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        const body = await request.json()
+        const { invoiceId, name, email, dueDate, invoiceItems, isDraft } = body
+        if (!invoiceId)
+            return NextResponse.json({ error: 'Missing invoiceId' }, { status: 400 })
+
+        const invoice = await InvoiceModel.findOne({
+            _id: new mongoose.Types.ObjectId(invoiceId),
+            userId: user._id
+        })
+
+        if (!invoice)
+            return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
+
+        if (!!isDraft && invoice.status === 'draft') {
+            invoice.name = name || invoice.name
+            invoice.email = email || invoice.email
+            invoice.dueDate = dueDate || invoice.dueDate
+            if (invoiceItems) invoice.invoiceItems = invoiceItems
+            invoice.status = 'draft'
+            await invoice.save()
+            return NextResponse.json(invoice, { status: 200 })
+        }
+
+        if (invoice.status !== 'draft') {
+            invoice.status = 'void'
+            await invoice.save()
+
+            const newStatus = !!isDraft ? 'draft' : 'outstanding'
+            const newInvoice = await InvoiceModel.create({
+                userId: user._id,
+                name: name || invoice.name,
+                email: email || invoice.email,
+                dueDate: dueDate || invoice.dueDate,
+                paymentAsset: invoice.paymentAsset,
+                paymentCollection: invoice.paymentCollection,
+                invoiceItems: invoiceItems || invoice.invoiceItems,
+                wallet: invoice.wallet,
+                status: newStatus
+            })
+            return NextResponse.json(newInvoice, { status: 201 })
+        }
+
+        if (!isDraft && invoice.status === 'draft') {
+            invoice.name = name || invoice.name
+            invoice.email = email || invoice.email
+            invoice.dueDate = dueDate || invoice.dueDate
+            if (invoiceItems) invoice.invoiceItems = invoiceItems
+            invoice.status = 'outstanding'
+            await invoice.save()
+            return NextResponse.json(invoice, { status: 200 })
+        }
+
+        return NextResponse.json(invoice, { status: 200 })
+    } catch (error: any) {
+        console.error('[PUT /api/invoices] Error:', error)
+        return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+}
+
