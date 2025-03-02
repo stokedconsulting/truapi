@@ -63,20 +63,20 @@ const actionCardItems = [
         title: "Buy USDC",
         description: "Earn 4.1% APY on your USDC",
         action: "Buy",
-        url: "/funds"
+        url: "/funds/onramp"
     },
     {
         icon: <SendIcon />,
         title: "Send USDC",
         description: "Send USDC Payments",
         action: "Send",
-        url: "/funds"
+        url: "/funds/pay"
     },
     {
         icon: <InvoiceIcon />,
         title: "Invoice",
         description: "Create and Send USDC Invoices",
         action: "Create",
-        url: "/invoice"
+        url: "/invoice/create"
     }
 ]
