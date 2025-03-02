@@ -16,31 +16,40 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (isLoaded) {
-            if (!userId) router.push('/login')
+            if (!pathname.includes('payment') && !userId) router.push('/login')
             // else if (userId) router.push('/home')
         }
     }, [isLoaded])
 
     // if (!isLoaded) return 'Loading...'
 
-    return (
-        <div className={styles.main}>
-            {/* SIDENAV */}
-            <SignedIn>
-                <SideNav />
-            </SignedIn>
-            <div className={styles.outlet}>
-                <SignedIn>
-                    <Header />
-                    {segments.length > 1 && (
-                        <button className={styles.backRow} onClick={() => router.back()}>
-                            <BackIcon />
-                            <span>{String(segments[0][0]).toUpperCase() + String(segments[0]).slice(1)}</span>
-                        </button>
-                    )}
-                </SignedIn>
-                {children}
+    if (pathname.includes('payment'))
+        return (
+            <div className={`${styles.main} ${styles.payment}`}>
+                <div className={styles.outlet}>
+                    {children}
+                </div>
             </div>
-        </div>
-    )
+        )
+    else
+        return (
+            <div className={styles.main}>
+                {/* SIDENAV */}
+                <SignedIn>
+                    <SideNav />
+                </SignedIn>
+                <div className={styles.outlet}>
+                    <SignedIn>
+                        <Header />
+                        {segments.length > 1 && (
+                            <button className={styles.backRow} onClick={() => router.back()}>
+                                <BackIcon />
+                                <span>{String(segments[0][0]).toUpperCase() + String(segments[0]).slice(1)}</span>
+                            </button>
+                        )}
+                    </SignedIn>
+                    {children}
+                </div>
+            </div>
+        )
 }

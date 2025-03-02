@@ -81,21 +81,21 @@ export default function Page() {
                     <span className={styles.title}>Email</span>
                     <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>
-                {/* Due Date */}
-                <div className={styles.columnContainer}>
-                    <span className={styles.title}>Due Date</span>
-                    <input type="date" value={date} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
-                </div>
-                {/* Receive Payments In */}
-                <div className={styles.columnContainer}>
-                    <span className={styles.title}>Receive Payments In</span>
-                    <input type="text" value={"USDC"} disabled />
-                </div>
                 {/* Payment Collection */}
                 <div className={styles.columnContainer}>
                     <span className={styles.title}>Payment Collection</span>
                     {/* <input type="text" value={"One Time"} /> */}
                     <Dropdown options={paymentCollectionOptions} selected={paymentCollection} onChange={(option) => setPaymentCollection(option)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                </div>
+                {/* Due Date */}
+                {(paymentCollection.name == "one-time") && <div className={styles.columnContainer}>
+                    <span className={styles.title}>Due Date</span>
+                    <input type="date" value={date} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                </div>}
+                {/* Receive Payments In */}
+                <div className={styles.columnContainer}>
+                    <span className={styles.title}>Receive Payments In</span>
+                    <input type="text" value={"USDC"} disabled />
                 </div>
                 {/* Invoice Items */}
                 <div className={styles.columnContainer}>

@@ -5,6 +5,10 @@
     align-items: center;
     width: 100vw;
 
+    &.payment {
+        background: linear-gradient(116.82deg, #FBFEFF 0%, #E5F7FF 52.28%);
+    }
+
     .outlet {
         display: flex;
         flex-direction: column;

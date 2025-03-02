@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         if (!id)
             return NextResponse.json({ error: 'Missing session id' }, { status: 400 })
         await connectToDatabase()
-        const session = await (await CheckoutSessionModel.findById(id))?.populate('invoiceId')
+        const session = await (await (await CheckoutSessionModel.findById(id))?.populate('invoiceId'))?.populate({ path: 'invoiceId.userId', select: 'name' })
         if (!session)
             return NextResponse.json({ error: 'Session not found' }, { status: 404 })
         return NextResponse.json(session, { status: 200 })

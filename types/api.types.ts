@@ -136,7 +136,7 @@ export type UpdateInvoiceRequest = {
 
 export type UpdateInvoiceResponse = InvoiceDocument;
 
-export type GetUserInvoicesResponse = InvoiceDocument[];
+export type GetUserInvoicesResponse = (InvoiceDocument & { userId: { name: string } })[];
 
 export type CreateCheckoutSessionRequest = {
     invoiceId: string
@@ -146,4 +146,4 @@ export type CreateCheckoutSessionRequest = {
 
 export type CreateCheckoutSessionResponse = CheckoutSessionDocument;
 
-export type GetCheckoutSessionResponse = CheckoutSessionDocument & { invoiceId: InvoiceDocument };
+export type GetCheckoutSessionResponse = CheckoutSessionDocument & { invoiceId: InvoiceDocument & { userId: { name: string } } };

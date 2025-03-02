@@ -17,7 +17,7 @@ const InvoiceSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
-    dueDate: { type: Date, required: true },
+    dueDate: { type: Date },
     paymentAsset: { type: String, required: true },
     paymentCollection: { type: String, enum: ["one-time", "multi-use"], required: true },
     invoiceItems: { type: [InvoiceItemSchema], required: true },

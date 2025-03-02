@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         if (invoiceId)
             query['_id'] = new mongoose.Types.ObjectId(invoiceId)
 
-        const invoices = await InvoiceModel.find(query).sort({ createdAt: -1 })
+        const invoices = await InvoiceModel.find(query).sort({ createdAt: -1 }).populate('userId', 'name')
         return NextResponse.json(invoices, { status: 200 })
     } catch (error: any) {
         console.error('[GET /api/invoices] Error:', error)

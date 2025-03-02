@@ -189,11 +189,10 @@ async function getUserInvoices(token: string, invoiceId?: string): Promise<GetUs
     return data;
 }
 
-async function createCheckoutSession(token: string, data: CreateCheckoutSessionRequest): Promise<CreateCheckoutSessionResponse> {
+async function createCheckoutSession(data: CreateCheckoutSessionRequest): Promise<CreateCheckoutSessionResponse> {
     const response = await fetch(`/api/invoice/checkout`, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
@@ -207,15 +206,12 @@ async function createCheckoutSession(token: string, data: CreateCheckoutSessionR
     return result;
 }
 
-async function getCheckoutSession(token: string, checkoutSessionId: string): Promise<GetCheckoutSessionResponse> {
+async function getCheckoutSession(checkoutSessionId: string): Promise<GetCheckoutSessionResponse> {
     // @review - why does this not work without `window.location.origin`?
     const url = new URL(`/api/invoice/checkout`, window.location.origin);
     url.searchParams.set('id', checkoutSessionId);
     const response = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        method: "GET"
     });
 
     if (!response.ok) {

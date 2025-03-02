@@ -4,12 +4,9 @@ import { toast } from "react-toastify";
 import { createCheckoutSession } from "../lib/api";
 
 export const useCreateCheckoutSession = (invoiceId: string, name: string, email: string) => {
-    // @todo - remove token requirement
-    const { getToken } = useAuth();
-
     const mutation = useMutation({
         mutationFn: async () => {
-            return createCheckoutSession((await getToken()) as string, { invoiceId, name, email });
+            return createCheckoutSession({ invoiceId, name, email });
         }
     });
 

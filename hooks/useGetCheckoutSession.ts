@@ -3,15 +3,12 @@ import { useAuth } from "@clerk/nextjs";
 import { getCheckoutSession } from "../lib/api";
 
 export const useGetCheckoutSession = (checkoutSessionId: string) => {
-    // @todo - remove token requirement
-    const { getToken, isSignedIn } = useAuth();
-
     return useQuery({
         queryKey: ["getCheckoutSession", checkoutSessionId],
         queryFn: async () => {
-            return getCheckoutSession((await getToken()) as string, checkoutSessionId);
+            return getCheckoutSession(checkoutSessionId);
         },
         refetchOnWindowFocus: false,
-        enabled: !!checkoutSessionId && !!isSignedIn,
+        enabled: !!checkoutSessionId,
     });
 };
