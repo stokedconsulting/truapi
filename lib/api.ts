@@ -170,7 +170,7 @@ async function updateInvoice(token: string, data: UpdateInvoiceRequest): Promise
     return result;
 }
 
-async function getUserInvoices(token: string, invoiceId?: string): Promise<GetUserInvoicesResponse> {
+async function getUserInvoices(token?: string, invoiceId?: string): Promise<GetUserInvoicesResponse> {
     const url = new URL(`/api/invoice`, window.location.origin);
     if (invoiceId)
         url.searchParams.set('invoiceId', invoiceId);

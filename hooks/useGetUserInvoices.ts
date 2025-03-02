@@ -9,9 +9,9 @@ export const useGetUserInvoices = (invoiceId?: string | null) => {
         queryKey: ["getUserInvoices"],
         queryFn: async () => {
             const token = (await getToken()) as string;
-            return getUserInvoices(token, invoiceId || undefined);
+            return getUserInvoices(invoiceId ? token : undefined, invoiceId || undefined);
         },
         refetchOnWindowFocus: false,
-        enabled: !!isSignedIn && !!isLoaded && invoiceId != null
+        enabled: !!invoiceId || (!!isLoaded && !!isSignedIn)
     });
 };

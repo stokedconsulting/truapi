@@ -17,6 +17,7 @@ import { base, baseSepolia } from "viem/chains"
 import { useCreateCheckoutSession } from "@/hooks/useCreateCheckoutSession"
 
 // @todo - websocket/polling to check payment status?
+// @todo - handle status
 
 export default function Page() {
     const { isConnected } = useAccount();

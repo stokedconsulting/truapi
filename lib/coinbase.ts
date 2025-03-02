@@ -2,6 +2,7 @@ import { Coinbase, Wallet, Webhook } from "@coinbase/coinbase-sdk";
 import { UserDocument } from "../models/User.model";
 import { decryptString, encryptString } from "./encryption";
 import { tokenAddresses } from "@/config";
+import { WebhookWalletActivityFilter } from "@coinbase/coinbase-sdk/dist/client";
 
 const cb = Coinbase.configureFromJson({ filePath: 'cdp_api_key.json', useServerSigner: false });
 
@@ -76,46 +77,43 @@ const listenToAddress = async (address: string) => {
 
         const webhookUri = process.env.NEXT_APP_ENV === "production"
             ? "https://superpayapp.xyz/api/webhook"
-            : "https://a6e4-2401-4900-1c96-5e73-6474-d1df-7dcb-a58f.ngrok-free.app/api/webhook";
+            : "https://e281-2401-4900-1c21-f70c-91cf-9d8b-3def-a866.ngrok-free.app/api/webhook";
 
         const resp = await Webhook.list();
         const webhooks = resp.data;
         let targetWebhook = webhooks.find((w) => {
             return (
                 w.getNetworkId() === networkId &&
-                w.getEventType() === "erc20_transfer" &&
-                w.getEventFilters()?.some(
-                    (f) => f.contract_address?.toLowerCase() === usdcAddress.toLowerCase()
-                )
+                w.getEventType() === "wallet_activity"
             );
         });
 
         const newFilter = {
-            contract_address: usdcAddress,
-            to_address: address,
+            addresses: [address],
+            wallet_id: address
         };
 
         if (!targetWebhook) {
             targetWebhook = await Webhook.create({
                 networkId,
                 notificationUri: webhookUri,
-                eventType: "erc20_transfer",
-                eventFilters: [newFilter],
+                eventType: "wallet_activity",
+                eventTypeFilter: newFilter,
             });
         } else {
-            const oldFilters = targetWebhook.getEventFilters() || [];
+            const oldFilters = targetWebhook.getEventTypeFilter() as WebhookWalletActivityFilter;
 
             if (
-                !oldFilters.some(
-                    (f) =>
-                        f.contract_address?.toLowerCase() === usdcAddress.toLowerCase() &&
-                        f.to_address?.toLowerCase() === address.toLowerCase()
-                )
+                oldFilters &&
+                !oldFilters.addresses?.some((f) => f.toLowerCase() === address.toLowerCase())
             ) {
-                const updatedFilters = [...oldFilters, newFilter];
+                const updatedFilters = {
+                    addresses: [...(oldFilters.addresses as string[]), address],
+                    wallet_id: address
+                };
                 await targetWebhook.update({
                     notificationUri: targetWebhook.getNotificationURI(),
-                    eventFilters: updatedFilters,
+                    eventTypeFilter: updatedFilters,
                 });
             }
         }
@@ -139,10 +137,7 @@ const unlistenToAddress = async (address: string) => {
         const targetWebhook = webhooks.find((w) => {
             return (
                 w.getNetworkId() === networkId &&
-                w.getEventType() === "erc20_transfer" &&
-                w.getEventFilters()?.some(
-                    (f) => f.contract_address?.toLowerCase() === usdcAddress.toLowerCase()
-                )
+                w.getEventType() === "wallet_activity"
             );
         });
 
@@ -150,26 +145,26 @@ const unlistenToAddress = async (address: string) => {
             return;
         }
 
-        const oldFilters = targetWebhook.getEventFilters() || [];
-        const newFilters = oldFilters.filter(
-            (f) =>
-                !(
-                    f.contract_address?.toLowerCase() === usdcAddress.toLowerCase() &&
-                    f.to_address?.toLowerCase() === address.toLowerCase()
-                )
-        );
+        const oldFilters = targetWebhook.getEventTypeFilter() as WebhookWalletActivityFilter;
+        console.log(oldFilters);
+        const newAddresses = oldFilters?.addresses?.filter((_address) => _address?.toLowerCase() != address.toLowerCase());
+        console.log(newAddresses);
+        const newFilters = {
+            addresses: newAddresses,
+            wallet_id: oldFilters.addresses ? oldFilters.addresses[0] : ""
+        }
 
-        if (newFilters.length === oldFilters.length)
+        if (oldFilters.addresses?.length === newFilters.addresses?.length)
             return;
 
-        if (newFilters.length === 0) {
+        if (newFilters.addresses?.length === 0) {
             await targetWebhook.delete();
             return;
         }
 
         await targetWebhook.update({
             notificationUri: targetWebhook.getNotificationURI(),
-            eventFilters: newFilters,
+            eventTypeFilter: newFilters,
         });
     } catch (err) {
         console.error("Failed to unlistenToAddress:", err);

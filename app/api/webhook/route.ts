@@ -3,10 +3,12 @@ import connectToDatabase from '@/lib/database'
 import crypto from 'crypto'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { CheckoutSessionModel } from '@/models/CheckoutSession.model'
-import { formatEther, formatUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { unlistenToAddress } from '@/lib/coinbase'
+import { tokenAddresses } from '@/config'
 
 // @review - Push webhook requests to queue for internal processing?
+// @todo - transfer funds to user
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,6 +39,9 @@ export async function POST(request: NextRequest) {
         if (!toAddr || !txHash || !amount)
             return NextResponse.json({ error: 'Invalid or missing fields' }, { status: 400 })
 
+        if (payload?.contractAddress.toLowerCase() != (process.env.NEXT_APP_ENV === "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']).toLowerCase())
+            return NextResponse.json({ error: 'Unsupported token' }, { status: 200 })
+
         let invoice = await InvoiceModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') })
         if (invoice) {
             invoice.payments.push({
@@ -45,6 +50,11 @@ export async function POST(request: NextRequest) {
                 amount,
                 transactionHash: txHash
             })
+            const totalPrice = invoice.invoiceItems.reduce((sum, val) => sum + val.price, 0);
+            if (Number(amount) >= totalPrice)
+                invoice.status = 'paid';
+            else
+                invoice.status = 'partially paid';
             await invoice.save()
             if (invoice.paymentCollection === "one-time")
                 await unlistenToAddress(toAddr)

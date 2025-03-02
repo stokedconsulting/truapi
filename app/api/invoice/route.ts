@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuth } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
-import { InvoiceModel } from '@/models/Invoice.model'
+import { InvoiceDocument, InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
 import { createWallet, listenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
@@ -53,27 +53,36 @@ export async function POST(request: NextRequest) {
     }
 }
 
+// @note - Common route for getting all user invoices or single invoice
+// @dev - Auth only applies when getting all user invoices
 export async function GET(request: NextRequest) {
     try {
-        const { userId } = getAuth(request)
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
-        await connectToDatabase()
-        const user = await UserModel.findOne({ userId })
-        if (!user)
-            return NextResponse.json({ error: 'User not found' }, { status: 404 })
-
         const searchParams = request.nextUrl.searchParams;
         const invoiceId = searchParams.get('invoiceId');
+        await connectToDatabase()
 
-        const query: { userId: mongoose.Types.ObjectId, _id?: mongoose.Types.ObjectId } = {
-            userId: user._id as mongoose.Types.ObjectId,
+        const { userId } = getAuth(request)
+        if (!invoiceId && !userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-        if (invoiceId)
-            query['_id'] = new mongoose.Types.ObjectId(invoiceId)
 
-        const invoices = await InvoiceModel.find(query).sort({ createdAt: -1 }).populate('userId', 'name')
+        let invoices: InvoiceDocument[];
+
+        if (invoiceId) {
+            invoices = await InvoiceModel.find({ _id: invoiceId }).sort({ createdAt: -1 }).populate('userId', 'name')
+        } else {
+            const user = await UserModel.findOne({ userId })
+            if (!user)
+                return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+            const query: { userId: mongoose.Types.ObjectId, _id?: mongoose.Types.ObjectId } = {
+                userId: user._id as mongoose.Types.ObjectId,
+            }
+            if (invoiceId)
+                query['_id'] = new mongoose.Types.ObjectId(invoiceId)
+
+            invoices = await InvoiceModel.find(query).sort({ createdAt: -1 }).populate('userId', 'name')
+        }
         return NextResponse.json(invoices, { status: 200 })
     } catch (error: any) {
         console.error('[GET /api/invoices] Error:', error)
