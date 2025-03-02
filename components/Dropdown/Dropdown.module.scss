@@ -3,6 +3,7 @@
     position: relative;
     width: var(--select-width);
     user-select: none;
+    width: 100%;
 
     &Header {
         display: flex;

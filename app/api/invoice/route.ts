@@ -5,6 +5,9 @@ import { InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
 import { createWallet, listenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
+import mongoose from 'mongoose'
+
+// @todo - PUT route to update existing draft or existing (unpaid) invoice | if existing then void previous and make new 
 
 export async function POST(request: NextRequest) {
     try {
@@ -22,6 +25,7 @@ export async function POST(request: NextRequest) {
             dueDate,
             paymentCollection,
             invoiceItems,
+            isDraft
         } = body
         if (!name || !email || !dueDate || !paymentCollection || !invoiceItems)
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -41,7 +45,8 @@ export async function POST(request: NextRequest) {
             paymentAsset: Coinbase.assets.Usdc,
             paymentCollection,
             invoiceItems,
-            wallet: body.wallet
+            wallet: body.wallet,
+            status: !!isDraft ? 'draft' : undefined
         })
         return NextResponse.json(newInvoice, { status: 201 })
     } catch (error: any) {
@@ -58,10 +63,19 @@ export async function GET(request: NextRequest) {
         }
         await connectToDatabase()
         const user = await UserModel.findOne({ userId })
-        if (!user) {
+        if (!user)
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        const searchParams = request.nextUrl.searchParams;
+        const invoiceId = searchParams.get('invoiceId');
+
+        const query: { userId: mongoose.Types.ObjectId, _id?: mongoose.Types.ObjectId } = {
+            userId: user._id as mongoose.Types.ObjectId,
         }
-        const invoices = await InvoiceModel.find({ userId: user._id }).sort({ createdAt: -1 })
+        if (invoiceId)
+            query['_id'] = new mongoose.Types.ObjectId(invoiceId)
+
+        const invoices = await InvoiceModel.find(query).sort({ createdAt: -1 })
         return NextResponse.json(invoices, { status: 200 })
     } catch (error: any) {
         console.error('[GET /api/invoices] Error:', error)

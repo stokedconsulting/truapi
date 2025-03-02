@@ -110,7 +110,7 @@ export type GetBalancesResponse = {
 
 export type InvoiceItem = {
     itemName: string,
-    price: number
+    price: string
 }
 
 export type CreateInvoiceRequest = {
@@ -119,6 +119,7 @@ export type CreateInvoiceRequest = {
     dueDate: string,
     paymentCollection: "one-time" | "multi-use",
     invoiceItems: InvoiceItem[],
+    isDraft?: boolean
 }
 
 export type CreateInvoiceResponse = InvoiceDocument;

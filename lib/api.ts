@@ -150,8 +150,11 @@ async function createInvoice(token: string, data: CreateInvoiceRequest): Promise
     return result;
 }
 
-async function getUserInvoices(token: string): Promise<GetUserInvoicesResponse> {
-    const response = await fetch(`/api/invoice`, {
+async function getUserInvoices(token: string, invoiceId?: string): Promise<GetUserInvoicesResponse> {
+    const url = new URL(`/api/invoice`, window.location.origin);
+    if (invoiceId)
+        url.searchParams.set('invoiceId', invoiceId);
+    const response = await fetch(url, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`
@@ -187,7 +190,6 @@ async function createCheckoutSession(token: string, data: CreateCheckoutSessionR
 async function getCheckoutSession(token: string, checkoutSessionId: string): Promise<GetCheckoutSessionResponse> {
     // @review - why does this not work without `window.location.origin`?
     const url = new URL(`/api/invoice/checkout`, window.location.origin);
-    console.log(url.toString())
     url.searchParams.set('id', checkoutSessionId);
     const response = await fetch(url.toString(), {
         method: "GET",

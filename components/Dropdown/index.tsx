@@ -47,11 +47,11 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onChange }) => {
             >
                 {selected ? (
                     <div className={styles.selectHeaderSelected}>
-                        <img
+                        {selected.icon && <img
                             src={selected.icon}
                             alt={selected.name}
                             className={styles.selectIcon}
-                        />
+                        />}
                         <span>{selected.name}</span>
                     </div>
                 ) : (
@@ -70,11 +70,11 @@ const Dropdown: React.FC<DropdownProps> = ({ options, selected, onChange }) => {
                             className={styles.selectOption}
                             onClick={() => handleOptionClick(option)}
                         >
-                            <img
+                            {option.icon && <img
                                 src={option.icon}
                                 alt={option.name}
                                 className={styles.selectOptionIcon}
-                            />
+                            />}
                             <span>{option.name}</span>
                         </div>)
                 })}

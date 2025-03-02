@@ -2,17 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@clerk/nextjs";
 import { getUserInvoices } from "../lib/api";
 
-export const useGetUserInvoices = () => {
+export const useGetUserInvoices = (invoiceId?: string | null) => {
     const { getToken, isLoaded, isSignedIn } = useAuth();
 
     return useQuery({
         queryKey: ["getUserInvoices"],
         queryFn: async () => {
             const token = (await getToken()) as string;
-            return getUserInvoices(token);
+            return getUserInvoices(token, invoiceId || undefined);
         },
         refetchOnWindowFocus: false,
-        refetchInterval: 10000,
-        enabled: !!isSignedIn && !!isLoaded
+        enabled: !!isSignedIn && !!isLoaded && invoiceId != null
     });
 };

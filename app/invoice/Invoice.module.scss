@@ -1,0 +1,55 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        width: 100%;
+
+        .statsContainer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 40px;
+
+            .stats {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-grow: 1;
+                gap: 10px;
+                max-width: 900px;
+
+                .stat {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: start;
+                    justify-content: center;
+
+                    .value {
+                        color: $royalBlue;
+                    }
+                }
+            }
+
+            .actionCardContainer {
+                flex-shrink: 0;
+            }
+        }
+    }
+
+    .tableContainer {
+        width: 100%;
+    }
+}
