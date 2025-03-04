@@ -1,0 +1,49 @@
+@import "../../styles/variables.scss";
+
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.draft {
+        border-color: $draft;
+        color: $draft;
+        background-color: rgba($draft, 0.1);
+    }
+
+    &.outstanding {
+        border-color: $outstanding;
+        color: $outstanding;
+        background-color: rgba($outstanding, 0.1);
+    }
+
+    &.overdue {
+        border-color: $overdue;
+        color: $overdue;
+        background-color: rgba($overdue, 0.1);
+    }
+
+    &.paid {
+        border-color: $paid;
+        color: $paid;
+        background-color: rgba($paid, 0.1);
+    }
+
+    &.void {
+        border-color: $void;
+        color: $void;
+        background-color: rgba($void, 0.1);
+    }
+
+    &.partial {
+        border-color: $partial;
+        color: $partial;
+        background-color: rgba($partial, 0.1);
+    }
+}

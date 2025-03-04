@@ -12,6 +12,7 @@ import {
     GetTransfersResponse,
     GetUserActivityResponse,
     GetUserInvoicesResponse,
+    GetUserInvoiceStatsResponse,
     GetUserResponse,
     TradeAssetRequest,
     TradeAssetResponse,
@@ -210,10 +211,29 @@ async function updateInvoice(token: string, data: UpdateInvoiceRequest): Promise
     return result;
 }
 
-async function getUserInvoices(token?: string, invoiceId?: string): Promise<GetUserInvoicesResponse> {
+async function voidInvoice(token: string, invoiceId: string): Promise<UpdateInvoiceResponse> {
+    const response = await fetch(`/api/invoice`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ invoiceId, isVoid: true })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to update invoice: ${response.statusText}`);
+    }
+
+    const result = (await response.json()) as UpdateInvoiceResponse;
+    return result;
+}
+
+async function getUserInvoices(token?: string, invoiceId?: string, limit?: number, page?: number): Promise<GetUserInvoicesResponse> {
     const url = new URL(`/api/invoice`, window.location.origin);
-    if (invoiceId)
-        url.searchParams.set('invoiceId', invoiceId);
+    if (invoiceId) url.searchParams.set('invoiceId', invoiceId);
+    if (limit) url.searchParams.set('limit', limit.toString());
+    if (page) url.searchParams.set('page', page.toString());
     const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -226,6 +246,23 @@ async function getUserInvoices(token?: string, invoiceId?: string): Promise<GetU
     }
 
     const data = (await response.json()) as GetUserInvoicesResponse;
+    return data;
+}
+
+async function getUserInvoiceStats(token?: string): Promise<GetUserInvoiceStatsResponse> {
+    const url = new URL(`/api/invoice/stats`, window.location.origin);
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch get user invoices: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetUserInvoiceStatsResponse;
     return data;
 }
 
@@ -273,7 +310,9 @@ export {
     getBalances,
     createInvoice,
     updateInvoice,
+    voidInvoice,
     getUserInvoices,
+    getUserInvoiceStats,
     createCheckoutSession,
     getCheckoutSession
 };

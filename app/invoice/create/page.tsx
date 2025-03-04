@@ -1,13 +1,14 @@
 "use client";
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import MinusCircleIcon from "@/public/assets/icons/minus-circle.svg"
 import styles from "./CreateInvoice.module.scss"
 import { useCreateInvoice } from "@/hooks/useCreateInvoice"
 import { InvoiceItem } from "@/types/api.types"
 import { useGetUserInvoices } from '@/hooks/useGetUserInvoices'
 import Dropdown, { OptionType } from '@/components/Dropdown'
+import { StatusChip } from '@/components/StatusChip';
 
 // @todo - success redirect
 
@@ -23,26 +24,27 @@ export default function Page() {
     const [isDisabled, setIsDisabled] = useState(false);
 
     const { data, isFetching: isInvoiceFetching } = useGetUserInvoices(invoiceId || null);
+    const invoice = useMemo(() => data ? data.invoices[0] : undefined, [data]);
     const { createInvoice, isPending } = useCreateInvoice(name, email, date, paymentCollection.name as "one-time" | "multi-use", rows, invoiceId || undefined);
 
     // Set values from draft invoice
     useEffect(() => {
-        if (!data) return;
+        if (!invoice) return;
 
-        setName(data[0].name);
-        setEmail(data[0].email);
-        const date = (new Date(data[0].dueDate as unknown as string));
+        setName(invoice.name);
+        setEmail(invoice.email);
+        const date = (new Date(invoice.dueDate as unknown as string));
         const offset = date.getTimezoneOffset()
         const formattedDate = (new Date(date.getTime() - (offset * 60 * 1000))).toISOString().split('T')[0]
         console.log(formattedDate)
         setDate(formattedDate);
-        const paymentCollection = paymentCollectionOptions.filter((option) => option.name == data[0].paymentCollection)[0];
+        const paymentCollection = paymentCollectionOptions.filter((option) => option.name == invoice.paymentCollection)[0];
         setPaymentCollection(paymentCollection);
-        setRows(data[0].invoiceItems as unknown as InvoiceItem[]);
+        setRows(invoice.invoiceItems as unknown as InvoiceItem[]);
 
-        if (["paid", "void", "partially paid"].includes(data[0].status))
+        if (["paid", "void", "partially paid"].includes(invoice.status))
             setIsDisabled(true);
-    }, [data])
+    }, [invoice])
 
     const addRow = () => {
         setRows([...rows, { itemName: '', price: '' }]);
@@ -68,7 +70,7 @@ export default function Page() {
                     <div className={styles.invoiceId}>
                         <span className={styles.key}>Invoice ID:</span>
                         <span className={styles.value}>#{invoiceId.toUpperCase()}</span>
-                        <span className={styles.status}>[{data[0].status}]</span>
+                        {invoice && <StatusChip title={invoice?.status.toUpperCase()} className={invoice?.status} />}
                     </div>
                 }
                 {/* NAME */}
@@ -84,7 +86,6 @@ export default function Page() {
                 {/* Payment Collection */}
                 <div className={styles.columnContainer}>
                     <span className={styles.title}>Payment Collection</span>
-                    {/* <input type="text" value={"One Time"} /> */}
                     <Dropdown options={paymentCollectionOptions} selected={paymentCollection} onChange={(option) => setPaymentCollection(option)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>
                 {/* Due Date */}

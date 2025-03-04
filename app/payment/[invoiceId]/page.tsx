@@ -31,7 +31,7 @@ export default function Page() {
     const [email, setEmail] = useState('');
 
     const { data, isFetching: isInvoiceFetching, isError: isInvoiceError } = useGetUserInvoices(invoiceId || null);
-    const invoice = useMemo(() => data ? data[0] : undefined, [data]);
+    const invoice = useMemo(() => data ? data.invoices[0] : undefined, [data]);
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
     const { transferErc20, isPending: isTransferPending } = useErc20Transfer(
         (process.env.NEXT_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),

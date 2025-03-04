@@ -172,7 +172,19 @@ export type UpdateInvoiceRequest = {
 
 export type UpdateInvoiceResponse = InvoiceDocument;
 
-export type GetUserInvoicesResponse = (InvoiceDocument & { userId: { name: string } })[];
+export type GetUserInvoicesResponse = ({
+    invoices: (InvoiceDocument & { userId: { name: string } })[],
+    totalCount?: number,
+});
+
+export type GetUserInvoiceStatsResponse = {
+    totalCount?: number,
+    draftCount?: number,
+    overdueCount?: number,
+    outstandingCount?: number,
+    paidCount?: number,
+    partiallyPaidCount?: number
+}
 
 export type CreateCheckoutSessionRequest = {
     invoiceId: string

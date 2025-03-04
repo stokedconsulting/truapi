@@ -67,24 +67,42 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        let invoices: InvoiceDocument[];
-
+        // If invoiceId is provided, just fetch that invoice(s) without pagination or counts
         if (invoiceId) {
-            invoices = await InvoiceModel.find({ _id: invoiceId }).sort({ createdAt: -1 }).populate('userId', 'name')
-        } else {
-            const user = await UserModel.findOne({ userId })
-            if (!user)
-                return NextResponse.json({ error: 'User not found' }, { status: 404 })
-
-            const query: { userId: mongoose.Types.ObjectId, _id?: mongoose.Types.ObjectId } = {
-                userId: user._id as mongoose.Types.ObjectId,
-            }
-            if (invoiceId)
-                query['_id'] = new mongoose.Types.ObjectId(invoiceId)
-
-            invoices = await InvoiceModel.find(query).sort({ createdAt: -1 }).populate('userId', 'name')
+            const invoices = await InvoiceModel.find({ _id: invoiceId })
+                .sort({ createdAt: -1 })
+                .populate('userId', 'name')
+            return NextResponse.json({ invoices }, { status: 200 })
         }
-        return NextResponse.json(invoices, { status: 200 })
+
+        // Otherwise, userId is guaranteed to exist, so fetch all invoices for that user with pagination & counts
+        const user = await UserModel.findOne({ userId })
+        if (!user)
+            return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+        const query: { userId: mongoose.Types.ObjectId } = {
+            userId: user._id as mongoose.Types.ObjectId,
+        }
+
+        // Pagination
+        const limit = parseInt(searchParams.get('limit') || '10')
+        const page = parseInt(searchParams.get('page') || '1')
+        const skip = (page - 1) * limit
+
+        // Fetch paginated invoices
+        const invoices = await InvoiceModel.find(query)
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .skip(skip)
+            .populate('userId', 'name')
+
+        // Count all invoices for the user
+        const totalCount = await InvoiceModel.countDocuments(query)
+
+        return NextResponse.json({
+            invoices,
+            totalCount
+        }, { status: 200 })
     } catch (error: any) {
         console.error('[GET /api/invoices] Error:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })

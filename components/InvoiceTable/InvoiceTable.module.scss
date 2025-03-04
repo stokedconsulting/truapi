@@ -1,0 +1,27 @@
+@import "../../styles/variables.scss";
+
+.actionRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    gap: 10px;
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    svg {
+        transition-duration: 0.3s;
+
+        &:hover {
+            opacity: 0.6;
+            transition-duration: 0.3s;
+        }
+    }
+}
+
+.value {
+    color: $royalBlue;
+}

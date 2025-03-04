@@ -70,7 +70,7 @@ const actionCardItems = [
     {
         icon: <BuyIcon />,
         title: "Buy USDC",
-        description: "Earn 4.1% APY on your USDC",
+        description: "Earn 4.1% with USDC Rewards",
         action: "Buy",
         url: "/funds/onramp"
     },

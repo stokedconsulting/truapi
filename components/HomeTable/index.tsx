@@ -51,6 +51,7 @@ export default function RecentActivityTable() {
             const dateStr = new Date(item.timestamp as number).toLocaleString();
             const assetStr = item.asset || "";
             const amountStr = `${(item.amount || 0).toFixed(2)} ${assetStr.toUpperCase()}`;
+            // @ts-ignore
             let nameOrAddress = item.name || item.email || shortAddress(item.address, 10) || "N/A";
             const statusStr = item.status || "";
 

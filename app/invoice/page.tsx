@@ -4,36 +4,38 @@ import { useMemo } from "react";
 import styles from "./Invoice.module.scss";
 import ActionCard from "@/components/ActionCard";
 import InvoiceIcon from "@/public/assets/icons/invoice.svg";
-import HomeTable from "@/components/HomeTable";
+import InvoiceTable from "@/components/InvoiceTable";
+import { useGetUserInvoicesStats } from "@/hooks/useGetUserInvoiceStats";
 
 export default function Page() {
+    const { data: invoiceStats } = useGetUserInvoicesStats();
 
     const stats = useMemo(() => [
         {
             title: "All",
-            value: 5
+            value: invoiceStats?.totalCount
         },
         {
             title: "Draft",
-            value: 5
+            value: invoiceStats?.draftCount
         },
         {
             title: "Overdue",
-            value: 5
+            value: invoiceStats?.overdueCount
         },
         {
             title: "Outstanding",
-            value: 5
+            value: invoiceStats?.outstandingCount
         },
         {
             title: "Paid",
-            value: 5
+            value: invoiceStats?.paidCount
         },
         {
             title: "Partial",
-            value: 5
+            value: invoiceStats?.partiallyPaidCount
         },
-    ], [])
+    ], [invoiceStats])
 
     return (
         <div className={styles.main}>
@@ -64,7 +66,7 @@ export default function Page() {
             </div>
             {/* INVOICES TABLE */}
             <div className={styles.tableContainer}>
-                <HomeTable />
+                <InvoiceTable />
             </div>
         </div>
     );
