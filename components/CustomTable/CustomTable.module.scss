@@ -1,4 +1,5 @@
-@import "../../styles/variables.scss";
+@use "sass:color";
+@use "../../styles/variables.scss" as *;
 
 $table-border-color: #ddd;
 $primary-color: #007bff;
@@ -61,7 +62,7 @@ $primary-color: #007bff;
 }
 
 .table tbody tr:hover {
-    background-color: lighten($gray-light,8%);
+    background-color: color.adjust($gray-light, $lightness: 8%);
 }
 
 .action-btn {
@@ -73,7 +74,7 @@ $primary-color: #007bff;
     cursor: pointer;
 
     &:hover {
-        background-color: lighten($gray-light,10%);
+        background-color: color.adjust($gray-light, $lightness: 10%);
     }
 }
 

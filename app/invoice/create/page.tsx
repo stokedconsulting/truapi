@@ -29,7 +29,7 @@ export default function Page() {
 
     // Set values from draft invoice
     useEffect(() => {
-        if (!invoice) return;
+        if (!invoice || !invoiceId) return;
 
         setName(invoice.name);
         setEmail(invoice.email);
