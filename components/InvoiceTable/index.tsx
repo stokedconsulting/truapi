@@ -17,8 +17,9 @@ import { StatusChip } from "../StatusChip"
 import { useRouter } from "next/navigation"
 import EditIcon from "../../public/assets/icons/edit.svg";
 import DeleteIcon from "../../public/assets/icons/delete.svg";
-import { useCreateInvoice } from "@/hooks/useCreateInvoice";
+import LinkIcon from "../../public/assets/icons/link.svg";
 import { useVoidInvoice } from "@/hooks/useVoidInvoice";
+import Link from "next/link";
 
 interface InvoiceRow {
     id: string | any;
@@ -156,6 +157,16 @@ function ActionRow({ row }: { row: Row<InvoiceRow> }) {
 
     return (
         <div className={`${styles.actionRow} ${isPending ? styles.disabled : ""}`}>
+            {!["draft", "void"].includes(row.original.status) &&
+                <Link
+                    href={`/payment/${row.original.id}`}
+                    target="_blank"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    <LinkIcon />
+                </Link>}
             {["draft", "outstanding", "overdue"].includes(row.original.status) &&
                 <button onClick={(e) => {
                     e.stopPropagation();
