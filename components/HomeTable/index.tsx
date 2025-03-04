@@ -1,64 +1,71 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import CustomTable from "../CustomTable";
-
-// Define Type for Table Data
-interface Transaction {
+import { useGetRecentActivity } from "@/hooks/useGetRecentActivity";
+import { shortAddress } from "@/lib/utils";
+interface ActivityRow {
     date: string;
+    type: string;
     amount: string;
-    status: "Paid" | "Pending" | "Failed";
-    name: string;
-    method: string;
-    action: string;
+    nameOrAddress: string;
+    status: string;
+    transactionHash?: string;
 }
 
-const data: Transaction[] = [
-    { date: "2024-02-25", amount: "$100", status: "Paid", name: "John Doe", method: "Credit Card", action: "View" },
-    { date: "2024-02-26", amount: "$200", status: "Pending", name: "Jane Smith", method: "PayPal", action: "View" },
-    { date: "2024-02-27", amount: "$150", status: "Failed", name: "Alice Brown", method: "Bank Transfer", action: "Retry" },
-];
-
-const columns: ColumnDef<Transaction, any>[] = [
+const columns: ColumnDef<ActivityRow>[] = [
     {
         accessorKey: "date",
         header: "Date",
-        cell: (info) => info.getValue(),
+        cell: ({ getValue }) => getValue(),
+    },
+    {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ getValue }) => getValue(),
     },
     {
         accessorKey: "amount",
         header: "Amount",
-        cell: (info) => info.getValue(),
+        cell: ({ getValue }) => getValue(),
+    },
+    {
+        accessorKey: "nameOrAddress",
+        header: "Name / Address",
+        cell: ({ getValue }) => getValue(),
     },
     {
         accessorKey: "status",
         header: "Status",
-        cell: (info) => <span className={`status ${info.getValue().toLowerCase()}`}>{info.getValue()}</span>,
-    },
-    {
-        accessorKey: "name",
-        header: "Customer Name",
-        cell: (info) => info.getValue(),
-    },
-    {
-        accessorKey: "method",
-        header: "Payment Method",
-        cell: (info) => info.getValue(),
-    },
-    {
-        accessorKey: "action",
-        header: "Action",
-        cell: (info) => (
-            <button className="action-btn">
-                {info.getValue()}
-            </button>
-        ),
+        cell: ({ getValue }) => getValue(),
     },
 ];
 
-export default function HomeTable() {
+export default function RecentActivityTable() {
+    const { data } = useGetRecentActivity();
+
+    const tableData = useMemo<ActivityRow[]>(() => {
+        const activity = data?.activity || [];
+        return activity.map((item) => {
+            const dateStr = new Date(item.timestamp as number).toLocaleString();
+            const assetStr = item.asset || "";
+            const amountStr = `${(item.amount || 0).toFixed(2)} ${assetStr.toUpperCase()}`;
+            let nameOrAddress = item.name || item.email || shortAddress(item.address, 10) || "N/A";
+            const statusStr = item.status || "";
+
+            return {
+                date: dateStr,
+                type: item.type.toUpperCase(),
+                amount: amountStr,
+                nameOrAddress,
+                status: statusStr,
+                transactionHash: item.transactionHash || undefined,
+            };
+        });
+    }, [data]);
+
     return (
-        <CustomTable columns={columns} data={data} />
+        <CustomTable title="Recent Activity" columns={columns} data={tableData} paginationEnabled={false} />
     );
-};
+}

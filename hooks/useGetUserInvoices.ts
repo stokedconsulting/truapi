@@ -6,12 +6,13 @@ export const useGetUserInvoices = (invoiceId?: string | null) => {
     const { getToken, isLoaded, isSignedIn } = useAuth();
 
     return useQuery({
-        queryKey: ["getUserInvoices"],
+        queryKey: ["getUserInvoices", invoiceId],
         queryFn: async () => {
             const token = (await getToken()) as string;
             return getUserInvoices(invoiceId ? token : undefined, invoiceId || undefined);
         },
         refetchOnWindowFocus: false,
-        enabled: !!invoiceId || (!!isLoaded && !!isSignedIn)
+        refetchInterval: invoiceId ? 20 * 1000 : undefined,
+        enabled: !!isLoaded && !!isSignedIn
     });
 };

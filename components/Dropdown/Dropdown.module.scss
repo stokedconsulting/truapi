@@ -1,3 +1,5 @@
+@import "../../styles/variables.scss";
+
 .select {
     // --select-width: 100%;
     position: relative;
@@ -22,6 +24,7 @@
         border: 1px solid #CDCDCD;
         border-radius: 8px;
         min-width: 120px;
+        gap: 10px;
 
         &Selected {
             display: flex;
@@ -103,7 +106,7 @@
         z-index: 10;
 
         &:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: $gray-light;
         }
 
         .selectOptionIcon {

@@ -1,4 +1,5 @@
 import {
+    ActivityTimeFilter,
     BatchTransferAssetRequest,
     BatchTransferAssetResponse,
     CreateCheckoutSessionRequest,
@@ -7,7 +8,9 @@ import {
     CreateInvoiceResponse,
     GetBalancesResponse,
     GetCheckoutSessionResponse,
+    GetRecentActivityResponse,
     GetTransfersResponse,
+    GetUserActivityResponse,
     GetUserInvoicesResponse,
     GetUserResponse,
     TradeAssetRequest,
@@ -37,6 +40,43 @@ async function getUser(token: string): Promise<GetUserResponse> {
     const data = (await response.json()) as GetUserResponse;
     return data;
 }
+
+async function getUserActivity(token: string, timeFilter?: ActivityTimeFilter): Promise<GetUserActivityResponse> {
+    const url = new URL(`/api/activity/chart`, window.location.origin);
+    if (timeFilter)
+        url.searchParams.set('timeFilter', timeFilter);
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch user activity: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetUserActivityResponse;
+    return data;
+}
+
+async function getRecentActivity(token: string): Promise<GetRecentActivityResponse> {
+    const url = new URL(`/api/activity`, window.location.origin);
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch user activity: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetRecentActivityResponse;
+    return data;
+}
+
 
 // ===============================
 // ASSETS
@@ -224,6 +264,8 @@ async function getCheckoutSession(checkoutSessionId: string): Promise<GetCheckou
 
 export {
     getUser,
+    getUserActivity,
+    getRecentActivity,
     transferAsset,
     batchTransferAsset,
     tradeAsset,

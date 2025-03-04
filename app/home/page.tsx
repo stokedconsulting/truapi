@@ -1,3 +1,5 @@
+"use client"
+
 import styles from "./Home.module.scss"
 import BuyIcon from "@/public/assets/icons/buy.svg"
 import SendIcon from "@/public/assets/icons/send.svg"
@@ -5,8 +7,15 @@ import InvoiceIcon from "@/public/assets/icons/invoice.svg"
 import ActionCard from "@/components/ActionCard"
 import ActivityChart from "@/components/ActivityChart"
 import HomeTable from "@/components/HomeTable"
+import { useGetUserActivity } from "@/hooks/useGetUserActivity"
+import Dropdown, { OptionType } from "@/components/Dropdown"
+import { useState } from "react"
+import { ActivityTimeFilter } from "@/types/api.types"
+import { formatNumber } from "@/lib/utils"
 
 export default function Page() {
+    const [selectedTimeFilter, setSelectedTimeFilter] = useState(chartTimeOptions[0]);
+    const { data: activityData, isFetching } = useGetUserActivity(selectedTimeFilter.value as ActivityTimeFilter);
 
     return (
         <div className={styles.main}>
@@ -24,29 +33,29 @@ export default function Page() {
                     <div className={styles.header}>
                         <div className={styles.topRow}>
                             <h3>Activity</h3>
-                            {/* <select name="period" id="period">
-                                <option value="1">Last 24 hours</option>
-                                <option value="7">Last Week</option>
-                                <option value="30">Last Month</option>
-                                <option value="365">Last Year</option>
-                            </select> */}
+                            <div className={styles.dropdownContainer}>
+                                <Dropdown
+                                    options={chartTimeOptions}
+                                    selected={selectedTimeFilter}
+                                    onChange={(option) => { setSelectedTimeFilter(option) }} />
+                            </div>
                         </div>
                         <div className={styles.dataRow}>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Gross Volume</span>
-                                <span className={styles.value}>$1,000</span>
+                                <span className={styles.value}>${formatNumber(activityData?.grossVolume) || "NA"}</span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Total Payments</span>
-                                <span className={styles.value}>100</span>
+                                <span className={styles.value}>{formatNumber(activityData?.totalPayments) || "NA"}</span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Total USDC Rewards</span>
-                                <span className={styles.value}>$1,000</span>
+                                <span className={styles.value}>$0</span>
                             </div>
                         </div>
                     </div>
-                    <ActivityChart />
+                    <ActivityChart data={activityData?.volume} isLoading={isFetching} />
                 </div>
             </div>
             {/* TABLE/HISTORY SECTION */}
@@ -79,4 +88,27 @@ const actionCardItems = [
         action: "Create",
         url: "/invoice/create"
     }
+]
+
+const chartTimeOptions: OptionType[] = [
+    {
+        name: 'Last 24 hours',
+        value: '1d'
+    },
+    {
+        name: 'Last 1 week',
+        value: '1w'
+    },
+    {
+        name: 'Last 1 month',
+        value: '1m'
+    },
+    {
+        name: 'Last 6 months',
+        value: '6m'
+    },
+    {
+        name: 'Last 1 year',
+        value: '1y'
+    },
 ]

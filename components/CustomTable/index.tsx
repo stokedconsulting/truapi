@@ -13,11 +13,14 @@ import {
 import styles from "./CustomTable.module.scss";
 
 interface TableProps<T> {
+    title: string,
     columns: ColumnDef<T, any>[];
     data: T[];
+    paginationEnabled?: boolean;
+    searchEnabled?: boolean
 }
 
-const CustomTable = <T,>({ columns, data }: TableProps<T>) => {
+const CustomTable = <T,>({ title, columns, data, paginationEnabled = true, searchEnabled = false }: TableProps<T>) => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
@@ -38,15 +41,15 @@ const CustomTable = <T,>({ columns, data }: TableProps<T>) => {
     return (
         <div className={styles.tableContainer}>
             <div className={styles.header}>
-                <h3>Recent Payments</h3>
+                <h3>{title}</h3>
                 {/* Search Box */}
-                <input
+                {searchEnabled && <input
                     type="text"
                     value={globalFilter}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     placeholder="Search a transaction..."
                     className={styles.searchInput}
-                />
+                />}
             </div>
 
             {/* Table */}
@@ -80,7 +83,7 @@ const CustomTable = <T,>({ columns, data }: TableProps<T>) => {
             </table>
 
             {/* Pagination Controls */}
-            <div className={styles.pagination}>
+            {paginationEnabled && <div className={styles.pagination}>
                 <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
                     {"<<"}
                 </button>
@@ -90,7 +93,7 @@ const CustomTable = <T,>({ columns, data }: TableProps<T>) => {
                 <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
                     {">>"}
                 </button>
-            </div>
+            </div>}
         </div>
     );
 };

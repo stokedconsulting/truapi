@@ -4,8 +4,9 @@ import styles from "./Dropdown.module.scss";
 import DownArrowIcon from "@/public/assets/icons/down-arrow.svg";
 
 export type OptionType = {
-    icon: string | undefined;
+    icon?: string | undefined;
     name: string;
+    value?: string;
 };
 
 type DropdownProps = {

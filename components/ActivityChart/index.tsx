@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -11,92 +11,12 @@ import {
 } from "recharts";
 import styles from "./ActivityChart.module.scss";
 
-const dayData = [
-    { name: "00:00", volume: 30 },
-    { name: "06:00", volume: 80 },
-    { name: "12:00", volume: 65 },
-    { name: "18:00", volume: 120 },
-    { name: "23:59", volume: 100 }
-];
-
-const weekData = [
-    { name: "Mon", volume: 120 },
-    { name: "Tue", volume: 200 },
-    { name: "Wed", volume: 180 },
-    { name: "Thu", volume: 250 },
-    { name: "Fri", volume: 190 },
-    { name: "Sat", volume: 300 },
-    { name: "Sun", volume: 100 }
-];
-
-const monthData = [
-    { name: "Week 1", volume: 500 },
-    { name: "Week 2", volume: 700 },
-    { name: "Week 3", volume: 450 },
-    { name: "Week 4", volume: 900 }
-];
-
-const halfYearData = [
-    { name: "Jan", volume: 320 },
-    { name: "Feb", volume: 450 },
-    { name: "Mar", volume: 600 },
-    { name: "Apr", volume: 900 },
-    { name: "May", volume: 700 },
-    { name: "Jun", volume: 1050 }
-];
-
-const yearData = [
-    { name: "Jan", volume: 320 },
-    { name: "Feb", volume: 450 },
-    { name: "Mar", volume: 600 },
-    { name: "Apr", volume: 900 },
-    { name: "May", volume: 700 },
-    { name: "Jun", volume: 1050 },
-    { name: "Jul", volume: 800 },
-    { name: "Aug", volume: 1200 },
-    { name: "Sep", volume: 600 },
-    { name: "Oct", volume: 900 },
-    { name: "Nov", volume: 1100 },
-    { name: "Dec", volume: 950 }
-];
-
-export default function ActivityChart() {
-    const [timeframe, setTimeframe] = useState<"day" | "week" | "month" | "six" | "year">("day");
-
-    let chartData;
-    switch (timeframe) {
-        case "day":
-            chartData = dayData;
-            break;
-        case "week":
-            chartData = weekData;
-            break;
-        case "month":
-            chartData = monthData;
-            break;
-        case "six":
-            chartData = halfYearData;
-            break;
-        case "year":
-            chartData = yearData;
-            break;
-        default:
-            chartData = dayData;
-    }
-
+export default function ActivityChart({ data, isLoading }: { data?: { name: string, volume: number }[], isLoading: boolean }) {
     return (
         <div className={styles.chartContainer}>
-            <div className={styles.timeframeSelector}>
-                <button onClick={() => setTimeframe("day")} className={timeframe === "day" ? styles.active : ""}>1D</button>
-                <button onClick={() => setTimeframe("week")} className={timeframe === "week" ? styles.active : ""}>1W</button>
-                <button onClick={() => setTimeframe("month")} className={timeframe === "month" ? styles.active : ""}>1M</button>
-                <button onClick={() => setTimeframe("six")} className={timeframe === "six" ? styles.active : ""}>6M</button>
-                <button onClick={() => setTimeframe("year")} className={timeframe === "year" ? styles.active : ""}>1Y</button>
-            </div>
-
             <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
-                    data={chartData}
+                    data={data}
                     margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
                 >
                     <defs>

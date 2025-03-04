@@ -8,7 +8,8 @@ export const useGetCheckoutSession = (checkoutSessionId: string) => {
         queryFn: async () => {
             return getCheckoutSession(checkoutSessionId);
         },
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
+        refetchInterval: 20 * 1000,
         enabled: !!checkoutSessionId,
     });
 };

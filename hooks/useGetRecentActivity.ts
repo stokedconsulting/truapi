@@ -1,13 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { getUser } from "../lib/api"
+import { getRecentActivity } from "../lib/api"
 import { useAuth } from "@clerk/nextjs"
 
-export const useGetUser = () => {
+export const useGetRecentActivity = () => {
     const { getToken, isLoaded, isSignedIn } = useAuth();
 
     return useQuery({
-        queryKey: ["getUser", isLoaded, isSignedIn],
-        queryFn: async () => getUser((await getToken()) as string),
+        queryKey: ["getRecentActivity", isLoaded, isSignedIn],
+        queryFn: async () => getRecentActivity((await getToken()) as string),
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
         enabled: !!isSignedIn && !!isLoaded

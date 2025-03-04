@@ -33,6 +33,42 @@ export type DestinationUser = {
 
 export type GetUserResponse = User;
 
+export type ActivityTimeFilter = `1d` | `1w` | `1m` | `6m` | `1y`;
+
+export interface TransferActivity {
+    type: "transfer";
+    timestamp: number;
+    amount: number;
+    asset?: string;
+    status?: string;
+    address?: string;
+    transactionHash?: string | null;
+}
+
+export interface PaymentActivity {
+    type: "invoicePayment" | "checkoutPayment";
+    timestamp: number;
+    amount: number;
+    asset?: string;
+    status?: string;
+    invoiceId?: string;
+    transactionHash?: string | null;
+    name?: string;
+    email?: string;
+}
+
+export type GetUserActivityResponse = {
+    volume: { name: string, volume: number }[]
+    grossVolume: number,
+    totalPayments: number,
+}
+
+export type GetRecentActivityResponse = {
+    activity: Array<TransferActivity | PaymentActivity>,
+    hasMore: boolean,
+    nextPage: string | null,
+}
+
 export type TransferAssetRequest = {
     asset: string,
     recipient: string;
