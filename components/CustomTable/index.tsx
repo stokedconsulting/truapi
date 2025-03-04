@@ -128,7 +128,7 @@ function CustomTable<T>({
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
                         >
-                            {"<<"}
+                            {"<"}
                         </button>
                         <span>
                             Page {pageIndex + 1} of {pageCount}
@@ -137,7 +137,7 @@ function CustomTable<T>({
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
                         >
-                            {">>"}
+                            {">"}
                         </button>
                     </div>
                 )
