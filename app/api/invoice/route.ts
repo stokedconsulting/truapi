@@ -3,7 +3,7 @@ import { getAuth } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
 import { InvoiceDocument, InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
-import { createWallet, listenToAddress } from '@/lib/coinbase'
+import { createWallet, listenToAddress, unlistenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import mongoose from 'mongoose'
 
@@ -25,14 +25,15 @@ export async function POST(request: NextRequest) {
             invoiceItems,
             isDraft
         } = body
-        if (!name || !email || !dueDate || !paymentCollection || !invoiceItems)
+        if (!name || !email || !paymentCollection || !invoiceItems)
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
 
         if (paymentCollection === "one-time") {
             const { wallet, encryptedSeed } = await createWallet()
             const addr = await wallet.getDefaultAddress()
             body.wallet = { address: addr.getId(), seed: encryptedSeed }
-            await listenToAddress(addr.getId())
+            if (!Boolean(JSON.parse(isDraft || 'false')))
+                await listenToAddress(addr.getId())
         }
 
         const newInvoice = await InvoiceModel.create({
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
             paymentCollection,
             invoiceItems,
             wallet: body.wallet,
-            status: !!isDraft ? 'draft' : undefined
+            status: Boolean(JSON.parse(isDraft || 'false')) ? 'draft' : undefined
         })
         return NextResponse.json(newInvoice, { status: 201 })
     } catch (error: any) {
@@ -103,7 +104,7 @@ export async function PUT(request: NextRequest) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
         const body = await request.json()
-        const { invoiceId, name, email, dueDate, invoiceItems, isDraft } = body
+        const { invoiceId, name, email, dueDate, invoiceItems, isDraft, isVoid } = body
         if (!invoiceId)
             return NextResponse.json({ error: 'Missing invoiceId' }, { status: 400 })
 
@@ -114,6 +115,15 @@ export async function PUT(request: NextRequest) {
 
         if (!invoice)
             return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
+
+        // @todo - handle multi-use unlisten? Void all checkout sessions
+        if (Boolean(JSON.parse(isVoid || 'false'))) {
+            invoice.status = 'void'
+            await invoice.save()
+            if (invoice.paymentCollection === 'one-time' && invoice.wallet?.address)
+                await unlistenToAddress(invoice.wallet?.address);
+            return NextResponse.json(invoice, { status: 200 })
+        }
 
         if (!!isDraft && invoice.status === 'draft') {
             invoice.name = name || invoice.name
@@ -141,6 +151,10 @@ export async function PUT(request: NextRequest) {
                 wallet: invoice.wallet,
                 status: newStatus
             })
+
+            if (newInvoice.paymentCollection === "one-time" && invoice.wallet?.address)
+                await listenToAddress(invoice.wallet?.address)
+
             return NextResponse.json(newInvoice, { status: 201 })
         }
 

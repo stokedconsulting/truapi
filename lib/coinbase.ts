@@ -73,8 +73,6 @@ const listenToAddress = async (address: string) => {
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
-        const usdcAddress = tokenAddresses.USDC[networkId];
-
         const webhookUri = process.env.NEXT_APP_ENV === "production"
             ? "https://superpayapp.xyz/api/webhook"
             : "https://e281-2401-4900-1c21-f70c-91cf-9d8b-3def-a866.ngrok-free.app/api/webhook";
@@ -129,8 +127,6 @@ const unlistenToAddress = async (address: string) => {
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
-        const usdcAddress = tokenAddresses.USDC[networkId];
-
         const resp = await Webhook.list();
         const webhooks = resp.data;
 
@@ -146,9 +142,7 @@ const unlistenToAddress = async (address: string) => {
         }
 
         const oldFilters = targetWebhook.getEventTypeFilter() as WebhookWalletActivityFilter;
-        console.log(oldFilters);
         const newAddresses = oldFilters?.addresses?.filter((_address) => _address?.toLowerCase() != address.toLowerCase());
-        console.log(newAddresses);
         const newFilters = {
             addresses: newAddresses,
             wallet_id: oldFilters.addresses ? oldFilters.addresses[0] : ""

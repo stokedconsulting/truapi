@@ -51,6 +51,14 @@
                     font-weight: 600;
                     gap: 10px;
                 }
+
+                .expiry {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    align-items: center;
+                    gap: 10px;
+                }
             }
 
             .hr {
@@ -139,6 +147,12 @@
                         width: 100%;
                     }
                 }
+            }
+        }
+
+        &.success {
+            svg {
+                max-width: 150px;
             }
         }
 

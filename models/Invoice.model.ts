@@ -5,12 +5,13 @@ const InvoiceItemSchema = new mongoose.Schema({
     price: { type: Number, required: true },
 }, { _id: false });
 
-const PaymentSchema = new mongoose.Schema({
+export const PaymentSchema = new mongoose.Schema({
     name: { type: String },
     email: { type: String },
     amount: { type: Number, required: true },
     transactionHash: { type: String },
     paidAt: { type: Date, default: Date.now },
+    checkoutSession: { type: mongoose.Schema.Types.ObjectId, ref: "CheckoutSession" }
 });
 
 const InvoiceSchema = new mongoose.Schema({

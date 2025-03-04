@@ -15,6 +15,8 @@ import { tokenAddresses } from "@/config"
 import { QRCodeSVG } from 'qrcode.react';
 import { base, baseSepolia } from "viem/chains"
 import { useCreateCheckoutSession } from "@/hooks/useCreateCheckoutSession"
+import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
+import ErrorPage from "next/error"
 
 // @todo - websocket/polling to check payment status?
 // @todo - handle status
@@ -28,7 +30,7 @@ export default function Page() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
 
-    const { data, isFetching: isInvoiceFetching } = useGetUserInvoices(invoiceId || null);
+    const { data, isFetching: isInvoiceFetching, isError: isInvoiceError } = useGetUserInvoices(invoiceId || null);
     const invoice = useMemo(() => data ? data[0] : undefined, [data]);
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
     const { transferErc20, isPending: isTransferPending } = useErc20Transfer(
@@ -43,6 +45,8 @@ export default function Page() {
             router.push(`/payment/checkout/${checkoutData._id}`);
     }, [isCheckoutSuccess, checkoutData])
 
+    if (isInvoiceError)
+        return <ErrorPage statusCode={404} title="Invoice Not Found" withDarkMode={false} />
     return (
         <div className={styles.main}>
             <Image
@@ -107,63 +111,68 @@ export default function Page() {
             </div>
             {/* PAYMENT */}
             {
-                (invoice?.paymentCollection == "one-time") && <div className={`${styles.container} ${styles.payment}`}>
-                    <span>Pay with</span>
-                    <div className={styles.paymentOption}>
-                        {
-                            !showQr
-                                ? <><WalletIcon /> Wallet</>
-                                : <><QRIcon /> QR Code</>
-                        }
+                (invoice?.paymentCollection == "one-time") &&
+                    invoice?.status == "paid"
+                    ? <div className={`${styles.container} ${styles.success}`}>
+                        <SuccessCheckIcon />
                     </div>
-                    <div className={styles.assetInfoContainer}>
-                        <div className={styles.assetInfo}>
-                            <span>Network</span>
-                            <div className={styles.assetBox}>
-                                <Image src={"/assets/base-logo.png"} width={24} height={24} alt="Bitcoin" />
-                                <span>{process.env.NEXT_APP_ENV == "production" ? "Base" : "Base Sepolia"}</span>
+                    : <div className={`${styles.container} ${styles.payment}`}>
+                        <span>Pay with</span>
+                        <div className={styles.paymentOption}>
+                            {
+                                !showQr
+                                    ? <><WalletIcon /> Wallet</>
+                                    : <><QRIcon /> QR Code</>
+                            }
+                        </div>
+                        <div className={styles.assetInfoContainer}>
+                            <div className={styles.assetInfo}>
+                                <span>Network</span>
+                                <div className={styles.assetBox}>
+                                    <Image src={"/assets/base-logo.png"} width={24} height={24} alt="Bitcoin" />
+                                    <span>{process.env.NEXT_APP_ENV == "production" ? "Base" : "Base Sepolia"}</span>
+                                </div>
+                            </div>
+                            <div className={styles.assetInfo}>
+                                <span>Coin</span>
+                                <div className={styles.assetBox}>
+                                    <Image src={"/assets/usdc-logo.png"} width={24} height={24} alt="Bitcoin" />
+                                    <span>USDC</span>
+                                </div>
                             </div>
                         </div>
-                        <div className={styles.assetInfo}>
-                            <span>Coin</span>
-                            <div className={styles.assetBox}>
-                                <Image src={"/assets/usdc-logo.png"} width={24} height={24} alt="Bitcoin" />
-                                <span>USDC</span>
+                        {!showQr && <button
+                            className={styles.primaryBttn}
+                            onClick={() => {
+                                isConnected
+                                    ? transferErc20()
+                                    : open()
+                            }}
+                            disabled={isInvoiceFetching || isTransferPending || isCheckoutPending}
+                        >
+                            {isConnected
+                                ? `Pay ${amount} USDC`
+                                : `Connect Wallet`
+                            }
+                        </button>}
+                        <button
+                            className={styles.secondaryBttn}
+                            disabled={isInvoiceFetching || isTransferPending || isCheckoutPending || !data}
+                            onClick={() => setShowQr(!showQr)}
+                        >
+                            {
+                                showQr
+                                    ? <><WalletIcon /> Pay by Wallet</>
+                                    : <><QRIcon /> Scan QR Code</>
+                            }
+                        </button>
+                        {showQr && <div className={styles.qrContainer}>
+                            <QRCodeSVG value={`ethereum:${invoice?.wallet?.address}@${process.env.NEXT_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
+                            <div className={styles.addressContainer}>
+                                <span>Address: <input type="text" value={invoice?.wallet?.address || undefined} /></span>
                             </div>
-                        </div>
+                        </div>}
                     </div>
-                    {!showQr && <button
-                        className={styles.primaryBttn}
-                        onClick={() => {
-                            isConnected
-                                ? transferErc20()
-                                : open()
-                        }}
-                        disabled={isInvoiceFetching || isTransferPending || isCheckoutPending}
-                    >
-                        {isConnected
-                            ? `Pay ${amount} USDC`
-                            : `Connect Wallet`
-                        }
-                    </button>}
-                    <button
-                        className={styles.secondaryBttn}
-                        disabled={isInvoiceFetching || isTransferPending || isCheckoutPending || !data}
-                        onClick={() => setShowQr(!showQr)}
-                    >
-                        {
-                            showQr
-                                ? <><WalletIcon /> Pay by Wallet</>
-                                : <><QRIcon /> Scan QR Code</>
-                        }
-                    </button>
-                    {showQr && <div className={styles.qrContainer}>
-                        <QRCodeSVG value={`ethereum:${invoice?.wallet?.address}@${process.env.NEXT_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
-                        <div className={styles.addressContainer}>
-                            <span>Address: <input type="text" value={invoice?.wallet?.address || undefined} /></span>
-                        </div>
-                    </div>}
-                </div>
             }
         </div >
     )

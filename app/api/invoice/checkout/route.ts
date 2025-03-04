@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
         if (invoice.paymentCollection !== "multi-use")
             return NextResponse.json({ error: 'Not allowed for one-time invoice' }, { status: 400 })
+        if (invoice.status == "void")
+            return NextResponse.json({ error: 'Invoice not active' }, { status: 400 })
 
         const exists = await CheckoutSessionModel.findOne({ invoiceId, email })
         if (exists)
