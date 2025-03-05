@@ -1,0 +1,63 @@
+@use "../../../styles/variables.scss" as *;
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+
+    .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding: 40px 10px;
+        gap: 10px;
+        background: linear-gradient(180deg, #FFFFFF 0%, #F6F6F6 100%);
+        border: 1px solid #E2E2E2;
+        border-radius: 10px;
+        width: 100%;
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .title {
+            font-weight: 500;
+        }
+
+        .subtitle {
+            color: $gray-medium;
+        }
+
+        .invoiceIdContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            gap: 5px;
+
+            .value {
+                color: $royalBlue;
+            }
+        }
+
+        .actionRow {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+    }
+
+    .tableContainer {
+        width: 100%;
+    }
+}

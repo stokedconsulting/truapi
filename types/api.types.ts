@@ -1,5 +1,5 @@
 import { CheckoutSessionDocument } from "@/models/CheckoutSession.model";
-import { InvoiceDocument } from "@/models/Invoice.model";
+import { InvoiceDocument, PaymentDocument } from "@/models/Invoice.model";
 
 export type User = {
     userId: string;
@@ -195,3 +195,5 @@ export type CreateCheckoutSessionRequest = {
 export type CreateCheckoutSessionResponse = CheckoutSessionDocument;
 
 export type GetCheckoutSessionResponse = CheckoutSessionDocument & { invoiceId: InvoiceDocument & { userId: { name: string } } };
+
+export type GetInvoicePaymentsResponse = { payments: PaymentDocument[] };

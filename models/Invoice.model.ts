@@ -37,3 +37,4 @@ const InvoiceSchema = new mongoose.Schema({
 
 export const InvoiceModel = mongoose.models.Invoice as Model<InvoiceDocument> || mongoose.model("Invoice", InvoiceSchema);
 export type InvoiceDocument = mongoose.InferSchemaType<typeof InvoiceSchema> & mongoose.Document;
+export type PaymentDocument = mongoose.InferSchemaType<typeof PaymentSchema> & mongoose.Document;

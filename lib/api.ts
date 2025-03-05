@@ -8,6 +8,7 @@ import {
     CreateInvoiceResponse,
     GetBalancesResponse,
     GetCheckoutSessionResponse,
+    GetInvoicePaymentsResponse,
     GetRecentActivityResponse,
     GetTransfersResponse,
     GetUserActivityResponse,
@@ -299,6 +300,24 @@ async function getCheckoutSession(checkoutSessionId: string): Promise<GetCheckou
     return data;
 }
 
+async function getInvoicePayments(token: string, invoiceId: string): Promise<GetInvoicePaymentsResponse> {
+    const url = new URL(`/api/invoice/payments`, window.location.origin);
+    url.searchParams.set('invoiceId', invoiceId);
+    const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch get invoice payments: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetInvoicePaymentsResponse;
+    return data;
+}
+
 export {
     getUser,
     getUserActivity,
@@ -314,5 +333,6 @@ export {
     getUserInvoices,
     getUserInvoiceStats,
     createCheckoutSession,
-    getCheckoutSession
+    getCheckoutSession,
+    getInvoicePayments
 };

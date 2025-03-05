@@ -18,8 +18,6 @@ import { useGetCheckoutSession } from "@/hooks/useGetCheckoutSession"
 import CountdownTimer from "@/components/CountdownTimer"
 import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
 
-// @todo - websocket/polling to check payment status?
-
 export default function Page() {
     const { isConnected } = useAccount();
     const { open } = useAppKit();
@@ -31,7 +29,7 @@ export default function Page() {
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
     const { transferErc20, isPending: isTransferPending } = useErc20Transfer(
         (process.env.NEXT_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),
-        invoice?.wallet?.address || undefined,
+        checkoutSession?.wallet?.address || undefined,
         amount,
     );
 
