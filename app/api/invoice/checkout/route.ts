@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-// import { getAuth } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { CheckoutSessionModel } from '@/models/CheckoutSession.model'
@@ -7,10 +6,6 @@ import { createWallet, listenToAddress } from '@/lib/coinbase'
 
 export async function POST(request: NextRequest) {
     try {
-        // @review - Non users can pay invoices
-        // const { userId } = getAuth(request)
-        // if (!userId)
-        //     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         const body = await request.json()
         const { invoiceId, name, email } = body
         if (!invoiceId || !name || !email)
@@ -36,11 +31,11 @@ export async function POST(request: NextRequest) {
             name,
             email,
             wallet: {
+                id: wallet.getId(),
                 address: addr.getId(),
                 seed: encryptedSeed
             }
         })
-        // @review - Unlisten when session expires
         // @review - Mongodb session/transaction setup
         await listenToAddress(addr.getId())
         return NextResponse.json(session, { status: 201 })
@@ -52,10 +47,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
     try {
-        // @review - Non users can pay invoices
-        // const { userId } = getAuth(request)
-        // if (!userId)
-        //     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
         if (!id)

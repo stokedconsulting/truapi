@@ -12,6 +12,7 @@ const CheckoutSessionSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     wallet: {
+        id: { type: String },
         address: { type: String },
         seed: { type: String }
     },

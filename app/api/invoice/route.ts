@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         if (paymentCollection === "one-time") {
             const { wallet, encryptedSeed } = await createWallet()
             const addr = await wallet.getDefaultAddress()
-            body.wallet = { address: addr.getId(), seed: encryptedSeed }
+            body.wallet = { id: wallet.getId(), address: addr.getId(), seed: encryptedSeed }
             if (!Boolean(JSON.parse(isDraft || 'false')))
                 await listenToAddress(addr.getId())
         }

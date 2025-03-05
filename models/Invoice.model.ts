@@ -29,6 +29,7 @@ const InvoiceSchema = new mongoose.Schema({
         required: true
     },
     wallet: {
+        id: { type: String },
         address: { type: String },
         seed: { type: String }
     },
