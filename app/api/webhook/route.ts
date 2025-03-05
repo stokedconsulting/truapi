@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
 
         let invoice = await InvoiceModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') })
         if (invoice) {
+            console.log("Invoice found: ", invoice._id);
             invoice.payments.push({
                 name: invoice.name,
                 email: invoice.email,
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
 
         const session = await CheckoutSessionModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') })
         if (session) {
+            console.log("Session found: ", session._id);
             invoice = await InvoiceModel.findById(session.invoiceId)
             if (invoice) {
                 invoice.payments.push({
@@ -71,6 +73,19 @@ export async function POST(request: NextRequest) {
                     amount,
                     transactionHash: txHash
                 })
+                session.payment = {
+                    name: session.name,
+                    email: session.email,
+                    amount: Number(amount),
+                    transactionHash: txHash,
+                    paidAt: payload?.blockTime
+                }
+                const totalPrice = invoice.invoiceItems.reduce((sum, val) => sum + val.price, 0);
+                if (Number(amount) >= totalPrice)
+                    session.status = 'paid';
+                else
+                    session.status = 'partially paid';
+                await session.save()
                 await invoice.save()
                 await unlistenToAddress(toAddr);
                 return NextResponse.json({ message: 'Payment recorded for multi-use invoice' }, { status: 200 })
