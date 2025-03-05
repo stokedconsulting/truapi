@@ -4,8 +4,10 @@ import crypto from 'crypto'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { CheckoutSessionModel } from '@/models/CheckoutSession.model'
 import { formatUnits } from 'viem'
-import { unlistenToAddress } from '@/lib/coinbase'
+import { getWalletFromData, unlistenToAddress } from '@/lib/coinbase'
 import { tokenAddresses } from '@/config'
+import { UserDocument } from '@/models/User.model'
+import { Coinbase } from '@coinbase/coinbase-sdk'
 
 // @review - Push webhook requests to queue for internal processing?
 // @todo - transfer funds to user
@@ -42,7 +44,7 @@ export async function POST(request: NextRequest) {
         if (payload?.contractAddress.toLowerCase() != (process.env.NEXT_APP_ENV === "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']).toLowerCase())
             return NextResponse.json({ error: 'Unsupported token' }, { status: 200 })
 
-        let invoice = await InvoiceModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') })
+        let invoice = await InvoiceModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') }).populate('userId');
         if (invoice) {
             console.log("Invoice found: ", invoice._id);
             invoice.payments.push({
@@ -59,13 +61,23 @@ export async function POST(request: NextRequest) {
             await invoice.save()
             if (invoice.paymentCollection === "one-time")
                 await unlistenToAddress(toAddr)
+
+            const wallet = await getWalletFromData(invoice.wallet?.id as string, invoice.wallet?.seed as string);
+            const transfer = await wallet.createTransfer({
+                destination: (invoice.userId as unknown as UserDocument)?.wallet?.address as string,
+                amount: Number(amount),
+                assetId: Coinbase.assets.Usdc,
+                gasless: true
+            });
+            await transfer.wait({ timeoutSeconds: 120 });
+
             return NextResponse.json({ message: 'Payment recorded for invoice' }, { status: 200 })
         }
 
         const session = await CheckoutSessionModel.findOne({ "wallet.address": new RegExp(toAddr, 'i') })
         if (session) {
             console.log("Session found: ", session._id);
-            invoice = await InvoiceModel.findById(session.invoiceId)
+            invoice = await InvoiceModel.findById(session.invoiceId).populate('userId')
             if (invoice) {
                 invoice.payments.push({
                     name: session.name,
@@ -88,6 +100,16 @@ export async function POST(request: NextRequest) {
                 await session.save()
                 await invoice.save()
                 await unlistenToAddress(toAddr);
+
+                const wallet = await getWalletFromData(session.wallet?.id as string, session.wallet?.seed as string);
+                const transfer = await wallet.createTransfer({
+                    destination: (invoice.userId as unknown as UserDocument)?.wallet?.address as string,
+                    amount: Number(amount),
+                    assetId: Coinbase.assets.Usdc,
+                    gasless: true
+                });
+                await transfer.wait({ timeoutSeconds: 120 });
+
                 return NextResponse.json({ message: 'Payment recorded for multi-use invoice' }, { status: 200 })
             }
         }
