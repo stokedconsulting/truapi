@@ -17,9 +17,8 @@ import { base, baseSepolia } from "viem/chains"
 import { useCreateCheckoutSession } from "@/hooks/useCreateCheckoutSession"
 import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
 import ErrorPage from "next/error"
-
-// @todo - websocket/polling to check payment status?
-// @todo - handle status
+import Skeleton from "react-loading-skeleton"
+import { StatusChip } from "@/components/StatusChip"
 
 export default function Page() {
     const { isConnected } = useAccount();
@@ -58,9 +57,17 @@ export default function Page() {
             {/* INVOICE DETAILS */}
             <div className={`${styles.container} ${styles.invoice}`}>
                 <div className={styles.header}>
-                    <h3><span>Invoice </span><span className={styles.value}>#{invoiceId.toUpperCase()}</span></h3>
+                    <h3>
+                        {isInvoiceFetching
+                            ? <Skeleton width={250} height={24} />
+                            : <>
+                                <span>Invoice </span><span className={styles.value}>#{invoiceId.toUpperCase()}</span>
+                            </>}
+                    </h3>
                     <div className={styles.amountContainer}>
-                        <span className={styles.amount}>{formatNumber(amount)} USDC</span>
+                        {isInvoiceFetching
+                            ? <Skeleton width={100} />
+                            : <span className={styles.amount}>{formatNumber(amount)} USDC</span>}
                         <Image
                             src="/assets/usdc-logo.png"
                             alt="USDC"
@@ -68,9 +75,12 @@ export default function Page() {
                             height={24}
                         />
                     </div>
-                    {(invoice?.paymentCollection == "one-time")
-                        ? <span className={styles.subtitle}>Due {(new Date(invoice?.dueDate as unknown as string).toLocaleDateString())}</span>
-                        : <span className={styles.subtitle}>{(new Date()).toLocaleDateString()}</span>}
+                    {isInvoiceFetching
+                        ? <Skeleton width={100} />
+                        : (invoice?.paymentCollection == "one-time")
+                            ? <span className={styles.subtitle}>Due {(new Date(invoice?.dueDate as unknown as string).toLocaleDateString())}</span>
+                            : <span className={styles.subtitle}>{(new Date()).toLocaleDateString()}</span>}
+                    {invoice && <StatusChip title={invoice.status.toUpperCase()} className={invoice.status} />}
                 </div>
                 <div className={styles.hr} />
                 <table>
@@ -78,11 +88,19 @@ export default function Page() {
                     {(invoice?.paymentCollection == "one-time") && <tbody>
                         <tr>
                             <td>From</td>
-                            <td>{String(invoice?.userId.name)}</td>
+                            <td>
+                                {isInvoiceFetching
+                                    ? <Skeleton width={100} />
+                                    : String(invoice?.userId.name)}
+                            </td>
                         </tr>
                         <tr>
                             <td>To</td>
-                            <td>{invoice?.name}</td>
+                            <td>
+                                {isInvoiceFetching
+                                    ? <Skeleton width={100} />
+                                    : String(invoice?.name)}
+                            </td>
                         </tr>
                     </tbody>}
                     {/* MULTIUSE CHECKOUT FORM */}
@@ -116,7 +134,7 @@ export default function Page() {
                     ? <div className={`${styles.container} ${styles.success}`}>
                         <SuccessCheckIcon />
                     </div>
-                    : <div className={`${styles.container} ${styles.payment}`}>
+                    : ['outstanding', 'overdue'].includes(invoice?.status) && <div className={`${styles.container} ${styles.payment}`}>
                         <span>Pay with</span>
                         <div className={styles.paymentOption}>
                             {
@@ -172,7 +190,8 @@ export default function Page() {
                                 <span>Address: <input type="text" value={invoice?.wallet?.address || undefined} /></span>
                             </div>
                         </div>}
-                    </div>)
+                    </div>
+                )
             }
         </div >
     )

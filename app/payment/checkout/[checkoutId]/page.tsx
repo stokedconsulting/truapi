@@ -17,6 +17,8 @@ import { base, baseSepolia } from "viem/chains"
 import { useGetCheckoutSession } from "@/hooks/useGetCheckoutSession"
 import CountdownTimer from "@/components/CountdownTimer"
 import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
+import Skeleton from "react-loading-skeleton"
+import { StatusChip } from "@/components/StatusChip"
 
 export default function Page() {
     const { isConnected } = useAccount();
@@ -47,9 +49,17 @@ export default function Page() {
                 {/* INVOICE DETAILS */}
                 <div className={`${styles.container} ${styles.invoice}`}>
                     <div className={styles.header}>
-                        <h3><span>Invoice </span><span className={styles.value}>#{String(invoice?._id).toUpperCase()}</span></h3>
+                        <h3>
+                            {isCheckoutFetching
+                                ? <Skeleton width={250} height={24} />
+                                : <>
+                                    <span>Invoice </span><span className={styles.value}>#{String(invoice?._id).toUpperCase()}</span>
+                                </>}
+                        </h3>
                         <div className={styles.amountContainer}>
-                            <span className={styles.amount}>{formatNumber(amount)} USDC</span>
+                            {isCheckoutFetching
+                                ? <Skeleton width={100} />
+                                : <span className={styles.amount}>{formatNumber(amount)} USDC</span>}
                             <Image
                                 src="/assets/usdc-logo.png"
                                 alt="USDC"
@@ -57,12 +67,18 @@ export default function Page() {
                                 height={24}
                             />
                         </div>
-                        {(invoice?.paymentCollection == "one-time")
-                            ? <span className={styles.subtitle}>Due {(new Date(invoice?.dueDate as unknown as string).toLocaleDateString())}</span>
-                            : <span className={styles.subtitle}>{(new Date()).toLocaleDateString()}</span>}
+                        {isCheckoutFetching
+                            ? <Skeleton width={100} />
+                            : (invoice?.paymentCollection == "one-time")
+                                ? <span className={styles.subtitle}>Due {(new Date(invoice?.dueDate as unknown as string).toLocaleDateString())}</span>
+                                : <span className={styles.subtitle}>{(new Date()).toLocaleDateString()}</span>}
                         <div className={styles.expiry}>
-                            Checkout expires in: <CountdownTimer targetDate={new Date(checkoutSession?.expiresAt as unknown as string)} />
+                            Checkout expires in:
+                            {isCheckoutFetching
+                                ? <Skeleton width={50} />
+                                : <CountdownTimer targetDate={new Date(checkoutSession?.expiresAt as unknown as string)} />}
                         </div>
+                        {checkoutSession && <StatusChip title={checkoutSession.status.toUpperCase()} className={checkoutSession.status} />}
                     </div>
                     <div className={styles.hr} />
                     <table>
@@ -70,11 +86,19 @@ export default function Page() {
                         <tbody>
                             <tr>
                                 <td>From</td>
-                                <td>{String(invoice?.userId.name)}</td>
+                                <td>
+                                    {isCheckoutFetching
+                                        ? <Skeleton width={100} />
+                                        : String(invoice?.userId.name)}
+                                </td>
                             </tr>
                             <tr>
                                 <td>To</td>
-                                <td>{checkoutSession?.name}</td>
+                                <td>
+                                    {isCheckoutFetching
+                                        ? <Skeleton width={100} />
+                                        : checkoutSession?.name}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
