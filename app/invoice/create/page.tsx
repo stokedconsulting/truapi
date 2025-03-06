@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from "react"
 import MinusCircleIcon from "@/public/assets/icons/minus-circle.svg"
 import styles from "./CreateInvoice.module.scss"
@@ -15,6 +15,7 @@ import { StatusChip } from '@/components/StatusChip';
 export default function Page() {
     const searchParams = useSearchParams()
     const invoiceId = searchParams.get('invoiceId')
+    const router = useRouter();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -25,7 +26,12 @@ export default function Page() {
 
     const { data, isFetching: isInvoiceFetching } = useGetUserInvoices(invoiceId || null);
     const invoice = useMemo(() => data ? data.invoices[0] : undefined, [data]);
-    const { createInvoice, isPending } = useCreateInvoice(name, email, date, paymentCollection.name as "one-time" | "multi-use", rows, invoiceId || undefined);
+    const { createInvoice, isPending, data: newInvoiceData, isSuccess } = useCreateInvoice(name, email, date, paymentCollection.name as "one-time" | "multi-use", rows, invoiceId || undefined);
+
+    useEffect(() => {
+        if (!isSuccess || !newInvoiceData) return;
+        router.push(`/invoice/${newInvoiceData._id}`)
+    }, [newInvoiceData, isSuccess])
 
     // Set values from draft invoice
     useEffect(() => {
