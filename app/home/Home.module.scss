@@ -23,6 +23,7 @@
             align-items: center;
             justify-content: center;
             gap: 50px;
+            max-width: 350px;
         }
 
         .activityContainer {
@@ -92,6 +93,7 @@
                 flex-wrap: wrap;
                 flex: auto;
                 gap: 20px;
+                max-width: none;
             }
 
             .activityContainer {
