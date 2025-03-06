@@ -23,7 +23,6 @@
             align-items: center;
             justify-content: center;
             gap: 50px;
-            max-width: 350px;
         }
 
         .activityContainer {
@@ -49,12 +48,10 @@
                     justify-content: space-between;
                     width: 100%;
 
-                    select {
-                        padding: 8px 20px;
-                        background: #FFFFFF;
-                        border: 1px solid #E2E2E2;
-                        border-radius: 10px;
-                        color: $gray-dark;
+                    .dropdownContainer {
+                        @media (max-width: 530px) {
+                            font-size: 14px;
+                        }
                     }
                 }
 
@@ -65,6 +62,10 @@
                     justify-content: start;
                     width: 100%;
                     gap: 40px;
+
+                    @media (max-width: 530px) {
+                        font-size: 14px;
+                    }
 
                     .dataItem {
                         display: flex;
@@ -80,7 +81,25 @@
                 }
             }
         }
+
+
+        @media (max-width: 670px) {
+            flex-direction: column;
+
+            .actionCardContainer {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                flex: auto;
+                gap: 20px;
+            }
+
+            .activityContainer {
+                width: 100%;
+            }
+        }
     }
+
     .tableContainer {
         width: 100%;
     }

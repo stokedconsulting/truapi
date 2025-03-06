@@ -7,10 +7,20 @@ $primary-color: #007bff;
 .tableContainer {
     display: flex;
     flex-direction: column;
-    align-items: end;
+    align-items: start;
     justify-content: center;
     gap: 20px;
     width: 100%;
+
+    .innerTableContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        width: 100%;
+        overflow: scroll;
+    }
+
 
     .header {
         display: flex;

@@ -15,6 +15,10 @@
     max-width: 350px;
     position: relative;
 
+    @media (max-width: 430px) {
+        max-width: 100%;
+    }
+
     &.column {
         flex-direction: column;
     }
