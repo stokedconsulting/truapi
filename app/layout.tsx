@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '@coinbase/onchainkit/styles.css';
 import { Providers } from "@/components/Providers";
 
-const poppins = Poppins({ weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"] });
+const poppins = Poppins({ weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
     title: "SuperPay",

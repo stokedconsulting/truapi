@@ -2,7 +2,7 @@ import { useAppUser } from '@/contexts/user.context'
 import Image from 'next/image'
 import styles from './Header.module.scss'
 import Link from 'next/link';
-import { addressExplorerLink, shortAddress } from '@/lib/utils';
+import { addressExplorerLink, formatNumber, shortAddress } from '@/lib/utils';
 
 // @todo - Skeleton loader
 
@@ -33,7 +33,7 @@ export default function Header() {
                 </Link> */}
                 <div className={styles.container}>
                     <span>Balance: </span>
-                    <span className={styles.value}>{balances?.usdc} USDC</span>
+                    <span className={styles.value}>{formatNumber(balances?.usdc)} USDC</span>
                 </div>
             </div>
         </div>

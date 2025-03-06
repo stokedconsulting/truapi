@@ -84,6 +84,14 @@ export default function SideNav() {
                             <item.icon />
                         </Link>
                     ))}
+                    <div className={styles.menuItem} onClick={() => signOut()}>
+                        <Image
+                            src="/assets/icons/logout.svg"
+                            alt="Logout"
+                            width={24}
+                            height={24}
+                        />
+                    </div>
                 </div>
             </div>
             <div className={styles.footer}>

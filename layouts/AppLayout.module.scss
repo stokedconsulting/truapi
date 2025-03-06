@@ -33,6 +33,11 @@
             height: fit-content;
         }
 
+        @media (max-width: 768px) {
+            padding: 20px;
+            gap: 20px;
+        }
+
         .backRow {
             display: flex;
             align-items: center;
