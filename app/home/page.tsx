@@ -24,7 +24,7 @@ export default function Page() {
                 {/* ACTION CARDS */}
                 <div className={styles.actionCardContainer}>
                     {actionCardItems.map((item, index) => {
-                        return <ActionCard key={index} item={item} />
+                        return <ActionCard key={index} item={item} className={"home"} />
                     })}
                 </div>
                 {/* CHART + ACTIVITY */}

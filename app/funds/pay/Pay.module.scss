@@ -21,6 +21,10 @@
         max-width: 500px;
         gap: 20px;
 
+        @media (max-width: 425px) {
+            padding: 20px;
+        }
+
         .balanceContainer {
             display: flex;
             align-items: center;

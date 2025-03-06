@@ -21,6 +21,10 @@
         width: 100%;
         max-width: 500px;
 
+        @media (max-width: 425px) {
+            padding: 20px;
+        }
+
         .selectionContainer {
             display: flex;
             flex-direction: row;

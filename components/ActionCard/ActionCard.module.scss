@@ -11,16 +11,39 @@
     gap: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.05);
-    width: 100%;
     max-width: 350px;
     position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
 
     @media (max-width: 430px) {
         max-width: 100%;
     }
 
-    &.column {
+    &.home {
+        @media (max-width: 670px) {
+            flex-direction: column;
+        }
+
+        @media (max-width: 570px) {
+            flex-direction: row;
+        }
+    }
+
+    &.funds {
         flex-direction: column;
+
+        @media (max-width: 900px) {
+            flex-direction: row;
+        }
+
+        @media (max-width: 705px) {
+            flex-direction: column;
+        }
+
+        @media (max-width: 476px) {
+            flex-direction: row;
+        }
     }
 
     .badge {

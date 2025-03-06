@@ -8,6 +8,10 @@
     width: 100%;
     gap: 50px;
 
+    @media (max-width: 720px) {
+        flex-direction: column;
+    }
+
     .qrContainer {
         display: flex;
         flex-direction: column;

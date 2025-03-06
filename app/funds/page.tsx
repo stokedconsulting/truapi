@@ -12,7 +12,7 @@ export default function Page() {
         <div className={styles.main}>
             <div className={styles.actionCardContainer}>
                 {actionCardItems.map((item, index) => {
-                    return <ActionCard key={index} item={item} className={"column"} />
+                    return <ActionCard key={index} item={item} className={"funds"} />
                 })}
             </div>
             <div className={styles.tableContainer}>
