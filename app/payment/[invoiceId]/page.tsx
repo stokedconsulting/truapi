@@ -112,7 +112,7 @@ export default function Page() {
             {/* PAYMENT */}
             {
                 (invoice?.paymentCollection == "one-time") &&
-                    (invoice?.status == "paid"
+                (invoice?.status == "paid"
                     ? <div className={`${styles.container} ${styles.success}`}>
                         <SuccessCheckIcon />
                     </div>

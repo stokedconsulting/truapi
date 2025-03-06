@@ -14,6 +14,11 @@
 
     &.payment {
         background: linear-gradient(116.82deg, #FBFEFF 0%, #E5F7FF 52.28%);
+
+        .outlet {
+            margin-top: none;
+            height: 100vh;
+        }
     }
 
     .outlet {
