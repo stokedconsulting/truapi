@@ -35,7 +35,7 @@ interface InvoiceRow {
 export default function InvoiceTable() {
     const [pageIndex, setPageIndex] = useState(0);
     const router = useRouter();
-    const { data } = useGetUserInvoices(null, 10, pageIndex);
+    const { data, isLoading, isFetching } = useGetUserInvoices(null, 10, pageIndex);
 
     const tableData = data?.invoices || [];
     const totalCount = data?.totalCount || 0;
@@ -147,6 +147,7 @@ export default function InvoiceTable() {
             searchEnabled={false}
             table={table}
             rowOnClick={(row) => router.push(`/invoice/${row.original.id}`)}
+            isLoading={isLoading || isFetching}
         />
     );
 }

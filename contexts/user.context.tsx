@@ -12,6 +12,7 @@ type UserContextType = {
     balances: GetBalancesResponse | undefined,
     clerkUser: ReturnType<typeof useUser> | undefined
     isUserLoading: boolean | undefined,
+    isBalanceLoading: boolean | undefined,
     signOut: (() => void) | undefined
 }
 
@@ -20,6 +21,7 @@ const UserContext = createContext<UserContextType>({
     balances: undefined,
     clerkUser: undefined,
     isUserLoading: undefined,
+    isBalanceLoading: undefined,
     signOut: undefined,
 });
 
@@ -28,7 +30,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const getUser = useGetUser();
     const { signOut: clerkSignOut } = useAuth();
     const clerkUser = useUser();
-    const { data: balances } = useGetBalances();
+    const { data: balances, isLoading: isBalanceLoading, isFetching: isBalanceFetching } = useGetBalances();
 
     const signOut = async () => {
         await clerkSignOut();
@@ -39,6 +41,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         user: getUser.data,
         balances,
         isUserLoading: getUser.isLoading || getUser.isFetching,
+        isBalanceLoading: isBalanceLoading || isBalanceFetching,
         clerkUser,
         signOut
     }}>

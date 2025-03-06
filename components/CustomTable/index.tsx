@@ -13,6 +13,7 @@ import {
     Row,
 } from "@tanstack/react-table";
 import styles from "./CustomTable.module.scss";
+import Skeleton from "react-loading-skeleton";
 
 interface TableProps<T> {
     title: string;
@@ -21,6 +22,7 @@ interface TableProps<T> {
     data?: T[];
     paginationEnabled?: boolean;
     searchEnabled?: boolean;
+    isLoading?: boolean;
     rowOnClick?: (row: Row<T>) => void
 }
 
@@ -31,6 +33,7 @@ function CustomTable<T>({
     data,
     paginationEnabled = true,
     searchEnabled = false,
+    isLoading = false,
     rowOnClick
 }: TableProps<T>) {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -109,15 +112,27 @@ function CustomTable<T>({
                         ))}
                     </thead>
                     <tbody>
-                        {table.getRowModel().rows.map((row) => (
-                            <tr key={row.id} style={rowOnClick ? { "cursor": "pointer" } : {}} onClick={() => { rowOnClick ? rowOnClick(row) : null }}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <td key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
+                        {isLoading
+                            ? [...Array(5).keys()].map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        {table.getFlatHeaders().map(() =>
+                                            <td>
+                                                <Skeleton width={100} />
+                                            </td>
+                                        )}
+                                    </tr>
+                                )
+                            })
+                            : table.getRowModel().rows.map((row) => (
+                                <tr key={row.id} style={rowOnClick ? { "cursor": "pointer" } : {}} onClick={() => { rowOnClick ? rowOnClick(row) : null }}>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <td key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>

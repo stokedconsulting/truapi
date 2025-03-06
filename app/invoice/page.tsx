@@ -6,9 +6,10 @@ import ActionCard from "@/components/ActionCard";
 import InvoiceIcon from "@/public/assets/icons/invoice.svg";
 import InvoiceTable from "@/components/InvoiceTable";
 import { useGetUserInvoicesStats } from "@/hooks/useGetUserInvoiceStats";
+import Skeleton from "react-loading-skeleton";
 
 export default function Page() {
-    const { data: invoiceStats } = useGetUserInvoicesStats();
+    const { data: invoiceStats, isLoading } = useGetUserInvoicesStats();
 
     const stats = useMemo(() => [
         {
@@ -48,7 +49,9 @@ export default function Page() {
                             return (
                                 <div key={stat.title} className={styles.stat}>
                                     <span className={styles.title}>{stat.title}</span>
-                                    <span className={styles.value}>{stat.value}</span>
+                                    {isLoading
+                                        ? <Skeleton width={50} />
+                                        : <span className={styles.value}>{stat.value}</span>}
                                 </div>
                             )
                         })}

@@ -12,6 +12,7 @@ import Dropdown, { OptionType } from "@/components/Dropdown"
 import { useState } from "react"
 import { ActivityTimeFilter } from "@/types/api.types"
 import { formatNumber } from "@/lib/utils"
+import Skeleton from "react-loading-skeleton"
 
 export default function Page() {
     const [selectedTimeFilter, setSelectedTimeFilter] = useState(chartTimeOptions[0]);
@@ -43,15 +44,27 @@ export default function Page() {
                         <div className={styles.dataRow}>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Gross Volume</span>
-                                <span className={styles.value}>${formatNumber(activityData?.grossVolume) || "NA"}</span>
+                                <span className={styles.value}>
+                                    {isFetching
+                                        ? <Skeleton width={50} />
+                                        : `$${formatNumber(activityData?.grossVolume)}` || "NA"}
+                                </span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Total Payments</span>
-                                <span className={styles.value}>{formatNumber(activityData?.totalPayments) || "NA"}</span>
+                                <span className={styles.value}>
+                                    {isFetching
+                                        ? <Skeleton width={50} />
+                                        : `$${formatNumber(activityData?.totalPayments)}` || "NA"}
+                                </span>
                             </div>
                             <div className={styles.dataItem}>
                                 <span className={styles.key}>Total USDC Rewards</span>
-                                <span className={styles.value}>$0</span>
+                                <span className={styles.value}>
+                                    {isFetching
+                                        ? <Skeleton width={50} />
+                                        : "$0"}
+                                </span>
                             </div>
                         </div>
                     </div>

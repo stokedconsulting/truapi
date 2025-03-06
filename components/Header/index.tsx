@@ -3,11 +3,10 @@ import Image from 'next/image'
 import styles from './Header.module.scss'
 import Link from 'next/link';
 import { addressExplorerLink, formatNumber, shortAddress } from '@/lib/utils';
-
-// @todo - Skeleton loader
+import Skeleton from 'react-loading-skeleton'
 
 export default function Header() {
-    const { user, balances } = useAppUser();
+    const { user, balances, isBalanceLoading } = useAppUser();
 
     const date = new Date();
 
@@ -27,13 +26,11 @@ export default function Header() {
                 <Link className={styles.container} href={addressExplorerLink(user?.wallet.address || "")} target='_blank'>
                     {shortAddress(user.wallet.address)}
                 </Link>
-                {/* @review - Expand on hover to reveal entire address? */}
-                {/* <Link className={`${styles.container} ${styles.address}`} href={addressExplorerLink(user?.wallet.address || "")} target='_blank'>
-                    {user?.wallet.address}
-                </Link> */}
                 <div className={styles.container}>
                     <span>Balance: </span>
-                    <span className={styles.value}>{formatNumber(balances?.usdc)} USDC</span>
+                    {isBalanceLoading
+                        ? <Skeleton width={50} />
+                        : <span className={styles.value}>{formatNumber(balances?.usdc)} USDC</span>}
                 </div>
             </div>
         </div>

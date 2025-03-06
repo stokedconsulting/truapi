@@ -43,7 +43,7 @@ const columns: ColumnDef<ActivityRow>[] = [
 ];
 
 export default function RecentActivityTable() {
-    const { data } = useGetRecentActivity();
+    const { data, isLoading, isFetching } = useGetRecentActivity();
 
     const tableData = useMemo<ActivityRow[]>(() => {
         const activity = data?.activity || [];
@@ -67,6 +67,10 @@ export default function RecentActivityTable() {
     }, [data]);
 
     return (
-        <CustomTable title="Recent Activity" columns={columns} data={tableData} paginationEnabled={false} />
+        <CustomTable title="Recent Activity"
+            columns={columns}
+            data={tableData}
+            paginationEnabled={false}
+            isLoading={isLoading || isFetching} />
     );
 }

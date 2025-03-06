@@ -24,7 +24,7 @@ export interface PaymentRow {
 export default function InvoicePaymentsTable({ invoiceId }: { invoiceId: string }) {
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    const { data } = useGetInvoicePayments(invoiceId);
+    const { data, isLoading, isFetching } = useGetInvoicePayments(invoiceId);
 
     const tableData = useMemo<PaymentRow[]>(() => {
         if (!data?.payments) return [];
@@ -94,6 +94,7 @@ export default function InvoicePaymentsTable({ invoiceId }: { invoiceId: string 
             table={table}
             paginationEnabled={false}
             searchEnabled={false}
+            isLoading={isLoading || isFetching}
         />
     );
 }
