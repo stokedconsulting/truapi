@@ -54,13 +54,15 @@ export default function Page() {
                         })}
                     </div>
                     <div className={styles.actionCardContainer}>
-                        <ActionCard item={{
-                            icon: <InvoiceIcon />,
-                            title: "Create Invoice",
-                            description: "Create and Send Crypto Invoices",
-                            url: '/invoice/create',
-                            action: 'Create',
-                        }} />
+                        <ActionCard
+                            className={"invoices"}
+                            item={{
+                                icon: <InvoiceIcon />,
+                                title: "Create Invoice",
+                                description: "Create and Send Crypto Invoices",
+                                url: '/invoice/create',
+                                action: 'Create',
+                            }} />
                     </div>
                 </div>
             </div>

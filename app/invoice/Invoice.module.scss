@@ -14,6 +14,7 @@
         align-items: start;
         justify-content: center;
         width: 100%;
+        gap: 10px;
 
         .statsContainer {
             display: flex;
@@ -23,6 +24,11 @@
             width: 100%;
             gap: 40px;
 
+            @media (max-width: 830px) {
+                flex-direction: column;
+                // flex-wrap: wrap;
+            }
+
             .stats {
                 display: flex;
                 align-items: center;
@@ -31,11 +37,18 @@
                 gap: 10px;
                 max-width: 900px;
 
+                @media (max-width: 830px) {
+                    width: 100%;
+                    flex-wrap: wrap;
+                    gap: 15px;
+                }
+
                 .stat {
                     display: flex;
                     flex-direction: column;
                     align-items: start;
                     justify-content: center;
+                    flex: 1 1 auto;
 
                     .value {
                         color: $royalBlue;

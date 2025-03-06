@@ -46,6 +46,15 @@
         }
     }
 
+    &.invoices {
+        @media (max-width: 900px) {
+            flex-direction: column;
+        }
+        @media (max-width: 830px) {
+            flex-direction: row;
+        }
+    }
+
     .badge {
         position: absolute;
         right: 0;
