@@ -1,17 +1,23 @@
+"use client"
+
 import Image from 'next/image'
 import styles from './SideNav.module.scss'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs'
 
-import HomeIcon from "../../public/assets/icons/home.svg";
-import AccountIcon from "../../public/assets/icons/account.svg";
-import FundsIcon from "../../public/assets/icons/funds.svg";
-import InvoiceIcon from "../../public/assets/icons/invoice.svg";
+import HomeIcon from "../../public/assets/icons/home.svg"
+import AccountIcon from "../../public/assets/icons/account.svg"
+import FundsIcon from "../../public/assets/icons/funds.svg"
+import InvoiceIcon from "../../public/assets/icons/invoice.svg"
+import MenuIcon from "../../public/assets/icons/menu.svg"
+import { useEffect, useRef, useState } from 'react'
 
 export default function SideNav() {
     const pathname = usePathname();
     const { signOut } = useAuth();
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     const menu = [
         {
@@ -36,6 +42,22 @@ export default function SideNav() {
         }
     ]
 
+    const toggleMenu = () => setIsOpen(!isOpen);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className={styles.main}>
             <div className={styles.logo}>
@@ -53,6 +75,16 @@ export default function SideNav() {
                         {item.name}
                     </Link>
                 ))}
+            </div>
+            <div className={`${styles.mobileMenu} ${isOpen ? styles.isOpen : ""}`} onClick={toggleMenu} ref={mobileMenuRef}>
+                <MenuIcon />
+                <div className={`${styles.menuItems}`}>
+                    {menu.map((item, index) => (
+                        <Link href={item.link} key={index} className={`${styles.menuItem} ${pathname.toLowerCase().includes(item.name.toLowerCase()) ? styles.active : ''}`}>
+                            <item.icon />
+                        </Link>
+                    ))}
+                </div>
             </div>
             <div className={styles.footer}>
                 <div className={styles.footerItem}>
@@ -74,6 +106,6 @@ export default function SideNav() {
                     <span>Logout</span>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

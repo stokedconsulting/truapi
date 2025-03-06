@@ -11,8 +11,24 @@
     padding: 20px;
     background: $cardGradient;
     color: $gray-medium;
+    z-index: 10;
+
+
+    @media (max-width: 1024px) {
+        flex-direction: row;
+        height: fit-content;
+        justify-content: space-between;
+        align-items: center;
+        width: 100vw;
+        background: white;
+        box-shadow: 0px 1px 10px $gray-light;
+        position: absolute;
+    }
 
     .menu {
+        @media (max-width: 1024px) {
+            display: none;
+        }
 
         a {
             text-decoration: none;
@@ -50,6 +66,10 @@
     }
 
     .footer {
+        @media (max-width: 1024px) {
+            display: none;
+        }
+
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -69,5 +89,69 @@
             }
         }
 
+    }
+
+    .mobileMenu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        background: linear-gradient(180deg, #FFFFFF 0%, #F6F6F6 100%);
+        border: 1px solid #E2E2E2;
+        border-radius: 10px;
+        padding: 10px;
+        gap: 20px;
+        height: 46px;
+        transition-duration: 0.7s;
+        overflow: hidden;
+
+        @media (max-width: 1024px) {
+            display: flex;
+        }
+
+        &.isOpen {
+            height: 226px;
+            transition-duration: 0.7s;
+            
+            .menuItems {
+                // visibility: visible;
+                // display: flex;
+                opacity: 1;
+                transition-duration: 0.5s;
+                pointer-events: all;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: $gray-medium;
+
+            &:hover {
+                // color: lighten($royalBlue, 30%);
+                color: color.adjust($royalBlue, $lightness: 30%)
+            }
+
+            &.active {
+                color: $royalBlue !important;
+            }
+        }
+
+        .menuItems {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            // visibility: hidden;
+            // display: none;
+            transition-duration: 0.5s;
+            opacity: 0;
+            position: absolute;
+            bottom: 20px;
+            pointer-events: none;
+        }
     }
 }

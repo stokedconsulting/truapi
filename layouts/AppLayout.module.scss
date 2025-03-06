@@ -1,9 +1,16 @@
+@use "../styles/animations" as *;
+@use "../styles/variables" as *;
+
 .main {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100vw;
+
+    @media (max-width: 1024px) {
+        flex-direction: column;
+    }
 
     &.payment {
         background: linear-gradient(116.82deg, #FBFEFF 0%, #E5F7FF 52.28%);
@@ -21,6 +28,11 @@
         padding: 40px;
         gap: 40px;
 
+        @media (max-width: 1024px) {
+            margin-top: 80px;
+            height: fit-content;
+        }
+
         .backRow {
             display: flex;
             align-items: center;
@@ -33,6 +45,57 @@
                 opacity: 0.5;
                 transition-duration: 0.3s;
             }
+        }
+    }
+
+    .loadingOverlay {
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        padding: 20px;
+        z-index: 11;
+
+        .abstract1 {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, $royalBlue, #a0d1ff24);
+            filter: blur(30px);
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .abstract2 {
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #89f6fe39, #66a6ff);
+            border-radius: 50%;
+            filter: blur(20px);
+            opacity: 0.8;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .abstract3 {
+            position: absolute;
+            bottom: 10%;
+            left: 30%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #89f6fe39, #66a6ff);
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.8;
+            animation: float 4s ease-in-out infinite;
         }
     }
 }
