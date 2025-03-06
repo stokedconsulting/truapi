@@ -29,6 +29,7 @@ export default function Page() {
             <div className={styles.header}>
                 <div className={styles.column}>
                     <div className={styles.invoiceIdContainer}>
+                        {/* <h3><span></span>Invoice<span className={styles.value}>#{invoiceId.toUpperCase()}</span></h3> */}
                         <h3>Invoice</h3>
                         <h3 className={styles.value}>#{invoiceId.toUpperCase()}</h3>
                     </div>
