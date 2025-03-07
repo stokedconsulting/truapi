@@ -1,10 +1,13 @@
 import { Coinbase, Wallet, Webhook } from "@coinbase/coinbase-sdk";
 import { UserDocument } from "../models/User.model";
 import { decryptString, encryptString } from "./encryption";
-import { tokenAddresses } from "@/config";
 import { WebhookWalletActivityFilter } from "@coinbase/coinbase-sdk/dist/client";
 
-const cb = Coinbase.configureFromJson({ filePath: 'cdp_api_key.json', useServerSigner: false });
+const cb = Coinbase.configure({
+    apiKeyName: process.env.CDP_API_KEY_NAME as string,
+    privateKey: process.env.CDP_API_PRIVATE_KEY as string,
+    useServerSigner: false
+});
 
 // ===============================
 // Mongo Helper functions

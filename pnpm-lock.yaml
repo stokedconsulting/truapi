@@ -12,8 +12,8 @@ importers:
         specifier: ^6.12.0
         version: 6.12.0(next@15.1.7(@babel/core@7.26.9)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(sass@1.85.1))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@coinbase/coinbase-sdk':
-        specifier: ^0.18.1
-        version: 0.18.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+        specifier: ^0.21.0
+        version: 0.21.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@coinbase/onchainkit':
         specifier: ^0.37.4
         version: 0.37.4(@tanstack/query-core@5.66.4)(@types/react@19.0.10)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.22.4)
@@ -680,8 +680,8 @@ packages:
     resolution: {integrity: sha512-QwomMjG1v2GqOITU2/rQUC11LFFsqNFUA92VKDo8dS1nN9iQadT6cNk7MZWqEYTxAfAM/IgX/gB00aGsLKaV8g==}
     engines: {node: '>=18.17.0'}
 
-  '@coinbase/coinbase-sdk@0.18.1':
-    resolution: {integrity: sha512-CpbxP+MUnRYT1ZH5y9hu3E6CKYixkTCBY2UIt+UYaxNZ8yQxngAkPOpYObdIQeheRLSgRO6xI7xby++gqfEHBw==}
+  '@coinbase/coinbase-sdk@0.21.0':
+    resolution: {integrity: sha512-ATyepIy2L9GAY5KNt5O71fB+pdekdfmVR4BHnnID6iOaVD5dE4mV9Mj9H4Wkg0uFy2Fj+F9IVEDqBklaD7lkKw==}
 
   '@coinbase/onchainkit@0.37.4':
     resolution: {integrity: sha512-OFcCpneLC4Wvs21vPFmTmAjbkwqdC2DlmedWlE2N4nsh7XoigtetHo6H1/IamYnSCRtvlxmHFUNE9ARVGIDyFw==}
