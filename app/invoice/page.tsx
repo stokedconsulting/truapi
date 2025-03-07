@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import styles from "./Invoice.module.scss";
 import ActionCard from "@/components/ActionCard";
-import InvoiceIcon from "@/public/assets/icons/invoice.svg";
+import InvoiceIcon from "@/src/assets/invoice.svg";
 import InvoiceTable from "@/components/InvoiceTable";
 import { useGetUserInvoicesStats } from "@/hooks/useGetUserInvoiceStats";
 import Skeleton from "react-loading-skeleton";

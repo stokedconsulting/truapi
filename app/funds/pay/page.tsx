@@ -8,8 +8,8 @@ import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import Papa from "papaparse"
 import { useAppUser } from "@/contexts/user.context"
-import MinusCircleIcon from "@/public/assets/icons/minus-circle.svg"
-import FailIcon from "@/public/assets/icons/fail.svg"
+import MinusCircleIcon from "@/src/assets/minus-circle.svg"
+import FailIcon from "@/src/assets/fail.svg"
 import { shortAddress } from "@/lib/utils"
 import { isAddress } from "viem/utils";
 

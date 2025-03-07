@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import styles from "./Accounts.module.scss"
 import { addressExplorerLink, getUserImage, shortAddress } from "@/lib/utils"
-import EmailIcon from "@/public/assets/icons/email.svg"
+import EmailIcon from "@/src/assets/email.svg"
 
 // @todo - Skeleton Loader
 

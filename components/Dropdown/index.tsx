@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import styles from "./Dropdown.module.scss";
-import DownArrowIcon from "@/public/assets/icons/down-arrow.svg";
+import DownArrowIcon from "@/src/assets/down-arrow.svg";
 
 export type OptionType = {
     icon?: string | undefined;

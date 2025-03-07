@@ -3,8 +3,8 @@
 import { useParams, useRouter } from "next/navigation"
 import styles from "./Payment.module.scss"
 import Image from "next/image"
-import WalletIcon from "@/public/assets/icons/wallet.svg"
-import QRIcon from "@/public/assets/icons/qr.svg"
+import WalletIcon from "@/src/assets/wallet.svg"
+import QRIcon from "@/src/assets/qr.svg"
 import { useGetUserInvoices } from "@/hooks/useGetUserInvoices"
 import { useEffect, useMemo, useState } from "react"
 import { formatNumber } from "@/lib/utils"
@@ -15,7 +15,7 @@ import { tokenAddresses } from "@/config"
 import { QRCodeSVG } from 'qrcode.react';
 import { base, baseSepolia } from "viem/chains"
 import { useCreateCheckoutSession } from "@/hooks/useCreateCheckoutSession"
-import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
+import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import ErrorPage from "next/error"
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"

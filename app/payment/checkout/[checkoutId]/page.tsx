@@ -4,8 +4,8 @@ import { useParams } from "next/navigation"
 import ErrorPage from 'next/error'
 import styles from "./Checkout.module.scss"
 import Image from "next/image"
-import WalletIcon from "@/public/assets/icons/wallet.svg"
-import QRIcon from "@/public/assets/icons/qr.svg"
+import WalletIcon from "@/src/assets/wallet.svg"
+import QRIcon from "@/src/assets/qr.svg"
 import { useMemo, useState } from "react"
 import { formatNumber } from "@/lib/utils"
 import { useAccount } from "wagmi"
@@ -16,7 +16,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { base, baseSepolia } from "viem/chains"
 import { useGetCheckoutSession } from "@/hooks/useGetCheckoutSession"
 import CountdownTimer from "@/components/CountdownTimer"
-import SuccessCheckIcon from "@/public/assets/icons/success-check.svg";
+import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"
 

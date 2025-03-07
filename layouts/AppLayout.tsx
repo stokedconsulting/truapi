@@ -2,12 +2,12 @@
 
 import Image from 'next/image'
 import { useAuth, SignedIn } from '@clerk/nextjs'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import SideNav from '@/components/SideNav'
 import styles from "./AppLayout.module.scss"
 import Header from '@/components/Header'
-import BackIcon from "../public/assets/icons/back.svg"
+import BackIcon from "../src/assets/back.svg"
 import { useAppUser } from '@/contexts/user.context'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -51,7 +51,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                             </button>
                         )}
                     </SignedIn>
-                    {children}
+                    <Suspense fallback={<div className={styles.loadingOverlay}>
+                        <Image src="/assets/superpay-logo.svg" alt='SuperPay' width={300} height={50} />
+                        <div className={styles.abstract1} />
+                        <div className={styles.abstract2} />
+                        <div className={styles.abstract3} />
+                    </div>}>
+                        {children}
+                    </Suspense>
                 </div>
                 {(!isLoaded || isUserLoading) && <div className={styles.loadingOverlay}>
                     <Image src="/assets/superpay-logo.svg" alt='SuperPay' width={300} height={50} />

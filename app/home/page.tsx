@@ -1,9 +1,9 @@
 "use client"
 
 import styles from "./Home.module.scss"
-import BuyIcon from "@/public/assets/icons/buy.svg"
-import SendIcon from "@/public/assets/icons/send.svg"
-import InvoiceIcon from "@/public/assets/icons/invoice.svg"
+import BuyIcon from "@/src/assets/buy.svg"
+import SendIcon from "@/src/assets/send.svg"
+import InvoiceIcon from "@/src/assets/invoice.svg"
 import ActionCard from "@/components/ActionCard"
 import ActivityChart from "@/components/ActivityChart"
 import HomeTable from "@/components/HomeTable"

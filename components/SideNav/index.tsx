@@ -6,11 +6,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 
-import HomeIcon from "../../public/assets/icons/home.svg"
-import AccountIcon from "../../public/assets/icons/account.svg"
-import FundsIcon from "../../public/assets/icons/funds.svg"
-import InvoiceIcon from "../../public/assets/icons/invoice.svg"
-import MenuIcon from "../../public/assets/icons/menu.svg"
+import HomeIcon from "../../src/assets/home.svg"
+import AccountIcon from "../../src/assets/account.svg"
+import FundsIcon from "../../src/assets/funds.svg"
+import InvoiceIcon from "../../src/assets/invoice.svg"
+import MenuIcon from "../../src/assets/menu.svg"
 import { useEffect, useRef, useState } from 'react'
 
 export default function SideNav() {

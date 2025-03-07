@@ -15,9 +15,9 @@ import { useGetUserInvoices } from "@/hooks/useGetUserInvoices"
 import { formatNumber, shortAddress } from "@/lib/utils"
 import { StatusChip } from "../StatusChip"
 import { useRouter } from "next/navigation"
-import EditIcon from "../../public/assets/icons/edit.svg";
-import DeleteIcon from "../../public/assets/icons/delete.svg";
-import LinkIcon from "../../public/assets/icons/link.svg";
+import EditIcon from "../../src/assets/edit.svg";
+import DeleteIcon from "../../src/assets/delete.svg";
+import LinkIcon from "../../src/assets/link.svg";
 import { useVoidInvoice } from "@/hooks/useVoidInvoice";
 import Link from "next/link";
 

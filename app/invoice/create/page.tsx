@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from "react"
-import MinusCircleIcon from "@/public/assets/icons/minus-circle.svg"
+import MinusCircleIcon from "@/src/assets/minus-circle.svg"
 import styles from "./CreateInvoice.module.scss"
 import { useCreateInvoice } from "@/hooks/useCreateInvoice"
 import { InvoiceItem } from "@/types/api.types"
