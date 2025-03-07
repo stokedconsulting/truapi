@@ -1,30 +1,26 @@
 // utils/encryptionKey.ts
-import fs from 'fs';
-import path from 'path';
 import crypto from 'crypto';
-
-const KEY_FILE_PATH = path.join(process.cwd(), 'my-secret.key');
-
-const KEY_BYTE_LENGTH = 32;
 
 let serverEncryptionKey: Buffer | null = null;
 
 function loadOrGenerateKey(): Buffer {
-    if (serverEncryptionKey) {
-        return serverEncryptionKey;
+    if (serverEncryptionKey) return serverEncryptionKey;
+  
+    const keyString = process.env.SERVER_ENCRYPTION_KEY;
+    if (!keyString) {
+      throw new Error("Missing SERVER_ENCRYPTION_KEY in environment variables.");
     }
-
-    if (fs.existsSync(KEY_FILE_PATH)) {
-        serverEncryptionKey = fs.readFileSync(KEY_FILE_PATH);
-    } else {
-        serverEncryptionKey = crypto.randomBytes(KEY_BYTE_LENGTH);
-        fs.writeFileSync(KEY_FILE_PATH, serverEncryptionKey);
+  
+    serverEncryptionKey = Buffer.from(keyString, "base64");
+  
+    if (serverEncryptionKey.length !== 32) {
+      throw new Error("ENCRYPTION_KEY must be exactly 32 bytes when decoded.");
     }
-
+  
     return serverEncryptionKey;
 }
 
-export const getServerEncryptionKey = (): Buffer => {
+const getServerEncryptionKey = (): Buffer => {
     return loadOrGenerateKey();
 };
 
