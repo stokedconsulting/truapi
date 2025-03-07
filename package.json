@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.758.0",
     "@clerk/nextjs": "^6.12.0",
     "@coinbase/coinbase-sdk": "^0.21.0",
     "@coinbase/onchainkit": "^0.37.4",

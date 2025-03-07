@@ -8,9 +8,10 @@ import { getWalletFromData, unlistenToAddress } from '@/lib/coinbase'
 import { tokenAddresses } from '@/config'
 import { UserDocument } from '@/models/User.model'
 import { Coinbase } from '@coinbase/coinbase-sdk'
+import { invoicePaymentConfirmationEmail } from '@/config/emailTemplates'
+import { sendEmail } from '@/lib/aws'
 
 // @review - Push webhook requests to queue for internal processing?
-// @todo - transfer funds to user
 
 export async function POST(request: NextRequest) {
     try {
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
         await connectToDatabase()
         const toAddr = payload?.to
         const txHash = payload?.transactionHash
+        const datePaid = new Date(payload?.blockTime)
         // @todo - Dynamic based on token being accepted
         const amount = formatUnits(payload?.value || 0, 6)
         if (!toAddr || !txHash || !amount)
@@ -70,6 +72,16 @@ export async function POST(request: NextRequest) {
                 gasless: true
             });
             await transfer.wait({ timeoutSeconds: 120 });
+
+            sendEmail(
+                invoice.email,
+                "Invoice Payment Confirmation",
+                invoicePaymentConfirmationEmail(
+                    invoice.id,
+                    amount,
+                    datePaid.toISOString()
+                )
+            );
 
             return NextResponse.json({ message: 'Payment recorded for invoice' }, { status: 200 })
         }
@@ -109,6 +121,16 @@ export async function POST(request: NextRequest) {
                     gasless: true
                 });
                 await transfer.wait({ timeoutSeconds: 120 });
+
+                sendEmail(
+                    session.email,
+                    "Invoice Payment Confirmation",
+                    invoicePaymentConfirmationEmail(
+                        invoice.id,
+                        amount,
+                        datePaid.toISOString()
+                    )
+                );
 
                 return NextResponse.json({ message: 'Payment recorded for multi-use invoice' }, { status: 200 })
             }

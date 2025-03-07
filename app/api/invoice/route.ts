@@ -6,6 +6,8 @@ import { UserModel } from '@/models/User.model'
 import { createWallet, listenToAddress, unlistenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import mongoose from 'mongoose'
+import { sendEmail } from '@/lib/aws'
+import { invoicePaymentEmail } from '@/config/emailTemplates'
 
 export async function POST(request: NextRequest) {
     try {
@@ -47,6 +49,19 @@ export async function POST(request: NextRequest) {
             wallet: body.wallet,
             status: Boolean(JSON.parse(isDraft || 'false')) ? 'draft' : undefined
         })
+
+        if (paymentCollection == "one-time")
+            sendEmail(
+                newInvoice.email,
+                "New Invoice Received",
+                invoicePaymentEmail(
+                    newInvoice.id,
+                    `${newInvoice.invoiceItems.reduce((sum, item) => sum + item.price, 0).toString()} ${newInvoice.paymentAsset.toUpperCase()}`,
+                    request.headers.get('origin') + `/payment/${newInvoice.id}`,
+                    newInvoice.dueDate?.toISOString() || ""
+                )
+            );
+
         return NextResponse.json(newInvoice, { status: 201 })
     } catch (error: any) {
         console.error('[POST /api/invoices] Error:', error)
