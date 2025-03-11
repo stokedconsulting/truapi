@@ -76,9 +76,7 @@ const listenToAddress = async (address: string) => {
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
-        const webhookUri = process.env.NEXT_APP_ENV === "production"
-            ? "https://superpayapp.xyz/api/webhook"
-            : "https://8f64-2401-4900-1c97-474c-2854-b9ae-8191-c60e.ngrok-free.app/api/webhook";
+        const webhookUri = `${process.env.NEXT_PUBLIC_URL}/api/webhook`;
 
         const resp = await Webhook.list();
         const webhooks = resp.data;
