@@ -10,8 +10,6 @@ import { useGetUserInvoices } from '@/hooks/useGetUserInvoices'
 import Dropdown, { OptionType } from '@/components/Dropdown'
 import { StatusChip } from '@/components/StatusChip';
 
-// @todo - success redirect
-
 export default function Page() {
     const searchParams = useSearchParams()
     const invoiceId = searchParams.get('invoiceId')
@@ -81,7 +79,7 @@ export default function Page() {
                 }
                 {/* NAME */}
                 <div className={styles.columnContainer}>
-                    <span className={styles.title}>Name</span>
+                    <span className={styles.title}>Recipient (Company or Name)</span>
                     <input type="text" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>
                 {/* Email */}
@@ -106,17 +104,17 @@ export default function Page() {
                 </div>
                 {/* Invoice Items */}
                 <div className={styles.columnContainer}>
-                    <span className={styles.title}>Invoices Items</span>
+                    <span className={styles.title}>Invoice Line Item</span>
                     <table>
                         <tbody>
                             {rows.map((row, index) => {
                                 return <tr key={index}>
                                     <td>
-                                        <input type="text" name="itemName" value={row.itemName} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                                        <input type="text" name="itemName" placeholder='ex: Consulting Services' value={row.itemName} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
                                     </td>
                                     <td>
                                         <div className={styles.amountCell}>
-                                            <input type="number" name="price" value={row.price} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                                            <input type="number" name="price" placeholder='Amount' value={row.price} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
 
                                             {(index > 0 && !isDisabled) &&
                                                 <button type="button" onClick={() => removeRow(index)} disabled={isPending || isInvoiceFetching || isDisabled}>
