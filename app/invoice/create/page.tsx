@@ -95,7 +95,7 @@ export default function Page() {
                 {/* Due Date */}
                 {(paymentCollection.name == "one-time") && <div className={styles.columnContainer}>
                     <span className={styles.title}>Due Date</span>
-                    <input type="date" value={date} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                    <input type="date" value={date} min={new Date().toISOString().split('T')[0]} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>}
                 {/* Receive Payments In */}
                 <div className={styles.columnContainer}>
