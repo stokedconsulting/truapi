@@ -5,6 +5,7 @@ import { UserModel } from '@/models/User.model'
 import { getWalletFromUser } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import connectToDatabase from '@/lib/database'
+import "@/models";
 
 export async function GET(request: NextRequest) {
     try {

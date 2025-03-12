@@ -3,6 +3,7 @@ import { getAuth, clerkClient } from '@clerk/nextjs/server'
 import { UserDocument, UserModel } from '@/models/User.model'
 import * as coinbase from '@/lib/coinbase'
 import connectToDatabase from '@/lib/database'
+import "@/models";
 
 export async function GET(request: NextRequest) {
     try {

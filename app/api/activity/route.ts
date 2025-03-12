@@ -7,6 +7,7 @@ import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { getWalletFromUser } from "@/lib/coinbase";
 import { fetchTxTimestamp } from "@/lib/viem";
 import { PaymentActivity, TransferActivity } from "@/types/api.types";
+import "@/models";
 
 // @todo - fix sorting, older transfers show up at the start and new invoice payments at the bottom
 

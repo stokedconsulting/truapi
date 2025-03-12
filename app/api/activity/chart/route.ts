@@ -6,6 +6,7 @@ import { getWalletFromUser } from "@/lib/coinbase";
 import { InvoiceModel } from "@/models/Invoice.model";
 import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { fetchTxTimestamp } from "@/lib/viem";
+import "@/models";
 
 // Helper to format date keys
 function formatKey(date: Date, timeFilter: string) {

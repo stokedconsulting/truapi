@@ -3,6 +3,7 @@ import connectToDatabase from '@/lib/database'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { CheckoutSessionModel } from '@/models/CheckoutSession.model'
 import { createWallet, listenToAddress } from '@/lib/coinbase'
+import "@/models";
 
 export async function POST(request: NextRequest) {
     try {

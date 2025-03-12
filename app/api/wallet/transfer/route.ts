@@ -6,6 +6,7 @@ import { getWalletFromUser } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import connectToDatabase from '@/lib/database'
 import { supportedAssets } from '@/config'
+import "@/models";
 
 export async function POST(request: NextRequest) {
     try {

@@ -10,6 +10,7 @@ import { UserDocument } from '@/models/User.model'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import { invoicePaymentConfirmationEmail } from '@/config/emailTemplates'
 import { sendEmail } from '@/lib/aws'
+import "@/models";
 
 // @review - Push webhook requests to queue for internal processing?
 

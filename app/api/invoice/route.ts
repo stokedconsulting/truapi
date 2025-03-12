@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuth } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
-import { InvoiceDocument, InvoiceModel } from '@/models/Invoice.model'
+import { InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
 import { createWallet, listenToAddress, unlistenToAddress } from '@/lib/coinbase'
 import { Coinbase } from '@coinbase/coinbase-sdk'
 import mongoose from 'mongoose'
 import { sendEmail } from '@/lib/aws'
 import { invoicePaymentEmail } from '@/config/emailTemplates'
+import "@/models";
 
 export async function POST(request: NextRequest) {
     try {
