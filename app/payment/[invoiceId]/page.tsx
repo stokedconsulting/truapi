@@ -19,6 +19,7 @@ import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import ErrorPage from "next/error"
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"
+import { useCheckInvoicePayment } from "@/hooks/useCheckInvoicePayment"
 
 export default function Page() {
     const { isConnected } = useAccount();
@@ -38,6 +39,8 @@ export default function Page() {
         amount,
     );
     const { createCheckoutSession, isPending: isCheckoutPending, isSuccess: isCheckoutSuccess, data: checkoutData } = useCreateCheckoutSession(invoiceId, name, email);
+
+    useCheckInvoicePayment(invoiceId, undefined, data?.invoices[0].status == "paid" ? false : true);
 
     useEffect(() => {
         if (isCheckoutSuccess && checkoutData)

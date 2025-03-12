@@ -318,6 +318,22 @@ async function getInvoicePayments(token: string, invoiceId: string): Promise<Get
     return data;
 }
 
+async function checkInvoicePayment(invoiceId?: string, checkoutId?: string): Promise<GetInvoicePaymentsResponse> {
+    const url = new URL(`/api/invoice/status`, window.location.origin);
+    if (invoiceId) url.searchParams.set('invoiceId', invoiceId);
+    if (checkoutId) url.searchParams.set('checkoutId', checkoutId);
+    const response = await fetch(url.toString(), {
+        method: "GET"
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch invoice status: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetInvoicePaymentsResponse;
+    return data;
+}
+
 export {
     getUser,
     getUserActivity,
@@ -334,5 +350,6 @@ export {
     getUserInvoiceStats,
     createCheckoutSession,
     getCheckoutSession,
-    getInvoicePayments
+    getInvoicePayments,
+    checkInvoicePayment
 };

@@ -19,6 +19,7 @@ import CountdownTimer from "@/components/CountdownTimer"
 import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"
+import { useCheckInvoicePayment } from "@/hooks/useCheckInvoicePayment"
 
 export default function Page() {
     const { isConnected } = useAccount();
@@ -34,6 +35,7 @@ export default function Page() {
         checkoutSession?.wallet?.address || undefined,
         amount,
     );
+    useCheckInvoicePayment(undefined, checkoutId, checkoutSession?.status == "paid" ? false : true);
 
     if (isCheckoutError)
         return <ErrorPage statusCode={404} title="Checkout Session Not Found" withDarkMode={false} />
