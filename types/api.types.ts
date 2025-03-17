@@ -197,3 +197,5 @@ export type CreateCheckoutSessionResponse = CheckoutSessionDocument;
 export type GetCheckoutSessionResponse = CheckoutSessionDocument & { invoiceId: InvoiceDocument & { userId: { name: string } } };
 
 export type GetInvoicePaymentsResponse = { payments: PaymentDocument[] };
+
+export type GetOnrampBuyURLResponse = { onrampBuyUrl: string }

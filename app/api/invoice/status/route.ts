@@ -165,6 +165,7 @@ export async function GET(request: NextRequest) {
             if (invoiceOwner?.wallet?.address) {
                 const transfer = await wallet.createTransfer({
                     destination: invoiceOwner.wallet.address,
+                    // @todo - transfer wallet balance out instead of totalAmount
                     amount: totalPaid,
                     assetId: Coinbase.assets.Usdc,
                     gasless: true

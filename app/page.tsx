@@ -8,8 +8,9 @@ import ActionCard from "@/components/ActionCard"
 import ActivityChart from "@/components/ActivityChart"
 import HomeTable from "@/components/HomeTable"
 import { useGetUserActivity } from "@/hooks/useGetUserActivity"
+import { useGetOnrampBuyUrl } from "@/hooks/useGetOnrampBuyUrl"
 import Dropdown, { OptionType } from "@/components/Dropdown"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { ActivityTimeFilter } from "@/types/api.types"
 import { formatNumber } from "@/lib/utils"
 import Skeleton from "react-loading-skeleton"
@@ -19,6 +20,31 @@ export default function Page() {
     const { isLoaded, isSignedIn } = useAuth();
     const [selectedTimeFilter, setSelectedTimeFilter] = useState(chartTimeOptions[0]);
     const { data: activityData, isFetching } = useGetUserActivity(selectedTimeFilter.value as ActivityTimeFilter);
+    const { data: onrampData } = useGetOnrampBuyUrl();
+
+    const actionCardItems = useMemo(() => [
+        {
+            icon: <BuyIcon />,
+            title: "Buy USDC",
+            description: "Earn 4.1% with USDC Rewards",
+            action: "Buy",
+            url: onrampData?.onrampBuyUrl || ""
+        },
+        {
+            icon: <SendIcon />,
+            title: "Send USDC",
+            description: "Send USDC Payments",
+            action: "Send",
+            url: "/funds/pay"
+        },
+        {
+            icon: <InvoiceIcon />,
+            title: "Invoice",
+            description: "Create and Send USDC Invoices",
+            action: "Create",
+            url: "/invoice/create"
+        }
+    ], [onrampData])
 
     if (!isLoaded || !isSignedIn) return <></>
 
@@ -82,30 +108,6 @@ export default function Page() {
         </div>
     );
 }
-
-const actionCardItems = [
-    {
-        icon: <BuyIcon />,
-        title: "Buy USDC",
-        description: "Earn 4.1% with USDC Rewards",
-        action: "Buy",
-        url: "/funds/onramp"
-    },
-    {
-        icon: <SendIcon />,
-        title: "Send USDC",
-        description: "Send USDC Payments",
-        action: "Send",
-        url: "/funds/pay"
-    },
-    {
-        icon: <InvoiceIcon />,
-        title: "Invoice",
-        description: "Create and Send USDC Invoices",
-        action: "Create",
-        url: "/invoice/create"
-    }
-]
 
 const chartTimeOptions: OptionType[] = [
     {

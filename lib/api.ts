@@ -9,6 +9,7 @@ import {
     GetBalancesResponse,
     GetCheckoutSessionResponse,
     GetInvoicePaymentsResponse,
+    GetOnrampBuyURLResponse,
     GetRecentActivityResponse,
     GetTransfersResponse,
     GetUserActivityResponse,
@@ -334,6 +335,26 @@ async function checkInvoicePayment(invoiceId?: string, checkoutId?: string): Pro
     return data;
 }
 
+// ===============================
+// ONRAMP
+// ===============================
+async function getOnrampBuyUrl(token: string): Promise<GetOnrampBuyURLResponse> {
+    const url = new URL(`/api/onramp`, window.location.origin);
+    const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch onramp buy url: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as GetOnrampBuyURLResponse;
+    return data;
+}
+
 export {
     getUser,
     getUserActivity,
@@ -351,5 +372,6 @@ export {
     createCheckoutSession,
     getCheckoutSession,
     getInvoicePayments,
-    checkInvoicePayment
+    checkInvoicePayment,
+    getOnrampBuyUrl
 };
