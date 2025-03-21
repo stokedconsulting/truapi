@@ -79,7 +79,7 @@ const listenToAddress = async (address: string) => {
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
-        const webhookUri = `${process.env.NEXT_PUBLIC_URL}/api/webhook`;
+        const webhookUri = `${process.env.NEXT_PUBLIC_WEBHOOK_URL}`;
 
         const resp = await Webhook.list();
         const webhooks = resp.data;
