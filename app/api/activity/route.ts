@@ -116,8 +116,6 @@ export async function GET(request: NextRequest) {
             date: new Date(item.timestamp).toISOString(),
         }));
 
-        console.log(finalActivity);
-
         return NextResponse.json({ activity: finalActivity }, { status: 200 });
     } catch (error: any) {
         console.error("[GET /api/activity] Failed to list recent activity:", error);
