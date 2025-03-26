@@ -6,7 +6,7 @@ export const useGetUserInvoices = (invoiceId?: string | null, limit?: number, pa
     const { getToken, isLoaded, isSignedIn } = useAuth();
 
     return useQuery({
-        queryKey: ["getUserInvoices", invoiceId],
+        queryKey: ["getUserInvoices", invoiceId, limit, page],
         queryFn: async () => {
             const token = (await getToken()) as string;
             return getUserInvoices(invoiceId ? undefined : token, invoiceId || undefined, limit, page);
