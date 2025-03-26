@@ -135,7 +135,7 @@ export default function Page() {
                     ? <div className={`${styles.container} ${styles.success}`}>
                         <SuccessCheckIcon />
                     </div>
-                    : ['outstanding', 'overdue'].includes(invoice?.status) && <div className={`${styles.container} ${styles.payment}`}>
+                    : ['outstanding', 'overdue', 'partially paid'].includes(invoice?.status) && <div className={`${styles.container} ${styles.payment}`}>
                         <span>Pay with</span>
                         <div className={styles.paymentOption}>
                             {

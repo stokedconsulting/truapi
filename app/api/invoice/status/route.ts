@@ -5,10 +5,11 @@ import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { getWalletFromData, unlistenToAddress } from "@/lib/coinbase";
 import { tokenAddresses } from "@/config";
 import { sendEmail } from "@/lib/aws";
-import { invoicePaymentConfirmationEmail } from "@/config/emailTemplates";
+import { invoicePaymentConfirmationEmail, invoicePartialPaymentEmail } from "@/config/emailTemplates";
 import { UserDocument } from "@/models/User.model";
 import { Coinbase, TransactionStatus } from "@coinbase/coinbase-sdk";
 import "@/models";
+import { UserModel } from "@/models/User.model";
 
 export async function GET(request: NextRequest) {
     try {
@@ -81,6 +82,8 @@ export async function GET(request: NextRequest) {
                 : tokenAddresses.USDC["base-sepolia"];
 
         let totalPaid = 0;
+        let newTxHash = "";
+        let newPayments = [];
 
         for (const tx of allTx) {
             const status = tx.getStatus();
@@ -106,89 +109,185 @@ export async function GET(request: NextRequest) {
                     const rawValue = parseFloat(t.value);
                     const decimals = 6;
                     const paidAmount = rawValue / Math.pow(10, decimals);
-                    totalPaid += paidAmount;
-                    txHash = tx.getTransactionHash() || "";
+                    
+                    // Check if this transaction has already been processed
+                    const existingPayment = invoice.payments.find(
+                        (p: any) => p.transactionHash?.toLowerCase() === tx.getTransactionHash()?.toLowerCase()
+                    );
+                    
+                    if (!existingPayment) {
+                        totalPaid += paidAmount;
+                        newTxHash = tx.getTransactionHash() || "";
+                        newPayments.push({
+                            amount: paidAmount,
+                            transactionHash: newTxHash,
+                            paidAt: new Date()
+                        });
+                    }
                 }
             }
         }
 
-        const totalPrice = invoice.invoiceItems
-            ? invoice.invoiceItems.reduce((sum: number, item: any) => sum + (item.price || 0), 0)
-            : 0;
+        if (newPayments.length > 0) {
+            console.log(`[check-payment] Found ${newPayments.length} new payment(s) totaling ${totalPaid} USDC for doc: ${documentId}`);
 
-        if (totalPaid > 0) {
-            console.log(`[check-payment] Found new payment of ${totalPaid} USDC for doc: ${documentId}`);
+            const totalPrice = invoice.invoiceItems
+                ? invoice.invoiceItems.reduce((sum: number, item: any) => sum + (item.price || 0), 0)
+                : 0;
 
-            if (invoiceId) {
-                if (totalPaid >= totalPrice) {
-                    invoice.status = "paid";
-                } else {
-                    invoice.status = "partially paid";
+            // Calculate total payments including existing ones
+            const existingTotal = invoice.payments.reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+            const totalWithNew = existingTotal + totalPaid;
+
+            // Validate total payment amount but still process if it exceeds
+            if (totalWithNew > totalPrice) {
+                console.log(`[check-payment] Payment amount ${totalWithNew} exceeds invoice total ${totalPrice}, marking as paid`);
+            }
+
+            // Start a transaction to ensure atomicity
+            const dbSession = await InvoiceModel.startSession();
+            dbSession.startTransaction();
+
+            try {
+                if (invoiceId) {
+                    // Update status based on total payments - mark as paid if total exceeds
+                    if (totalWithNew >= totalPrice) {
+                        invoice.status = "paid";
+                    } else {
+                        invoice.status = "partially paid";
+                    }
+
+                    // Add all new payments
+                    for (const payment of newPayments) {
+                        invoice.payments.push({
+                            name: invoice.name,
+                            email: invoice.email,
+                            amount: payment.amount.toString(),
+                            transactionHash: payment.transactionHash,
+                            paidAt: payment.paidAt
+                        });
+                    }
+                    await invoice.save({ session: dbSession });
+                } else if (session && invoice) {
+                    // Update status based on total payments - mark as paid if total exceeds
+                    if (totalWithNew >= totalPrice) {
+                        session.status = "paid";
+                    } else {
+                        session.status = "partially paid";
+                    }
+
+                    // Update session payment with the latest payment
+                    const latestPayment = newPayments[newPayments.length - 1];
+                    session.payment = {
+                        name: session.name,
+                        email: session.email,
+                        amount: totalPaid,
+                        transactionHash: latestPayment.transactionHash,
+                        paidAt: latestPayment.paidAt
+                    };
+                    await session.save({ session: dbSession });
+
+                    // Add all new payments to invoice
+                    for (const payment of newPayments) {
+                        invoice.payments.push({
+                            name: session.name,
+                            email: session.email,
+                            amount: payment.amount.toString(),
+                            transactionHash: payment.transactionHash,
+                            paidAt: payment.paidAt,
+                            checkoutSession: session._id
+                        });
+                    }
+                    await invoice.save({ session: dbSession });
                 }
-                invoice.payments.push({
-                    name: invoice.name,
-                    email: invoice.email,
-                    amount: totalPaid.toString(),
-                    transactionHash: txHash,
-                });
-                await invoice.save();
-            } else if (session && invoice) {
-                if (totalPaid >= totalPrice) {
-                    session.status = "paid";
-                } else {
-                    session.status = "partially paid";
+
+                // Only unlisten if fully paid or exceeded
+                if (totalWithNew >= totalPrice) {
+                    console.log(`[check-payment] Fully paid. Unlistening from: ${address}`);
+                    await unlistenToAddress(address);
                 }
-                session.payment = {
-                    name: session.name,
-                    email: session.email,
-                    amount: totalPaid,
-                    transactionHash: txHash,
-                    paidAt: new Date(),
-                };
-                await session.save();
 
-                invoice.payments.push({
-                    name: session.name,
-                    email: session.email,
-                    amount: totalPaid.toString(),
-                    transactionHash: session.payment.transactionHash,
-                });
-                await invoice.save();
+                const invoiceOwner = invoice.userId;
+                if (invoiceOwner?.wallet?.address) {
+                    const transfer = await wallet.createTransfer({
+                        destination: invoiceOwner.wallet.address,
+                        amount: totalPaid,
+                        assetId: Coinbase.assets.Usdc,
+                        gasless: true
+                    });
+                    await transfer.wait({ timeoutSeconds: 120 });
+                }
+
+                // Send emails based on payment status
+                if (totalWithNew >= totalPrice) {
+                    // Send full payment confirmation to payer
+                    await sendEmail(
+                        (invoiceId ? invoice.email : session?.email) || "",
+                        "Payment Confirmation",
+                        invoicePaymentConfirmationEmail(
+                            invoice._id?.toString() || "",
+                            totalPaid.toString(),
+                            new Date().toISOString()
+                        )
+                    );
+
+                    // Send payment notification to invoice owner
+                    const invoiceOwner = await UserModel.findById(invoice.userId);
+                    if (invoiceOwner?.email) {
+                        await sendEmail(
+                            invoiceOwner.email,
+                            "New Payment Received",
+                            invoicePaymentConfirmationEmail(
+                                invoice._id?.toString() || "",
+                                totalPaid.toString(),
+                                new Date().toISOString(),
+                                true
+                            )
+                        );
+                    }
+                } else {
+                    // Send partial payment notification to payer
+                    await sendEmail(
+                        (invoiceId ? invoice.email : session?.email) || "",
+                        "Partial Payment Received",
+                        invoicePartialPaymentEmail(
+                            invoice._id?.toString() || "",
+                            totalPaid.toString(),
+                            totalPrice.toString(),
+                            (totalPrice - totalWithNew).toString(),
+                            new Date().toISOString()
+                        )
+                    );
+
+                    // Send partial payment notification to invoice owner
+                    const invoiceOwner = await UserModel.findById(invoice.userId);
+                    if (invoiceOwner?.email) {
+                        await sendEmail(
+                            invoiceOwner.email,
+                            "Partial Payment Received",
+                            invoicePaymentConfirmationEmail(
+                                invoice._id?.toString() || "",
+                                totalPaid.toString(),
+                                new Date().toISOString(),
+                                true
+                            )
+                        );
+                    }
+                }
+
+                await dbSession.commitTransaction();
+                return NextResponse.json(
+                    {
+                        message: `Payment(s) found. Marked invoice/session as paid/partial. totalPaid=${totalPaid}, totalWithExisting=${totalWithNew}`,
+                    },
+                    { status: 200 }
+                );
+            } catch (error) {
+                await dbSession.abortTransaction();
+                throw error;
+            } finally {
+                dbSession.endSession();
             }
-
-            if (totalPaid >= totalPrice) {
-                console.log(`[check-payment] Fully paid. Unlistening from: ${address}`);
-                await unlistenToAddress(address);
-            }
-
-            const invoiceOwner = invoice.userId;
-            if (invoiceOwner?.wallet?.address) {
-                const transfer = await wallet.createTransfer({
-                    destination: invoiceOwner.wallet.address,
-                    // @todo - transfer wallet balance out instead of totalAmount
-                    amount: totalPaid,
-                    assetId: Coinbase.assets.Usdc,
-                    gasless: true
-                });
-                await transfer.wait({ timeoutSeconds: 120 });
-            }
-
-            await sendEmail(
-                (invoiceId ? invoice.email : session?.email) || "",
-                "Invoice Payment Confirmation",
-                invoicePaymentConfirmationEmail(
-                    invoice._id?.toString() || "",
-                    totalPaid.toString(),
-                    new Date().toISOString()
-                )
-            );
-
-            return NextResponse.json(
-                {
-                    message: `Payment found. Marked invoice/session as paid/partial. totalPaid=${totalPaid}`,
-                },
-                { status: 200 }
-            );
         } else {
             return NextResponse.json(
                 { message: "No new payments found." },
