@@ -4,6 +4,7 @@ import connectToDatabase from "@/lib/database";
 import { UserModel } from "@/models/User.model";
 import { InvoiceModel } from "@/models/Invoice.model";
 import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
+import "@/models";
 
 export async function GET(request: NextRequest) {
     try {

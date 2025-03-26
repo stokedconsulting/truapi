@@ -7,6 +7,9 @@ import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { getWalletFromUser } from "@/lib/coinbase";
 import { fetchTxTimestamp } from "@/lib/viem";
 import { PaymentActivity, TransferActivity } from "@/types/api.types";
+import { tokenAddresses } from "@/config";
+import { TransactionStatus } from "@coinbase/coinbase-sdk";
+import "@/models";
 
 // @todo - fix sorting, older transfers show up at the start and new invoice payments at the bottom
 
@@ -27,13 +30,17 @@ export async function GET(request: NextRequest) {
         const wallet = await getWalletFromUser(user);
         const address = await wallet.getDefaultAddress();
 
+        // Get outgoing transfers
         const transfersResp = await address.listTransfers({ limit: 10 });
         const transfers = transfersResp.data;
 
         const transferActivities: TransferActivity[] = [];
 
-        for (const transfer of transfers) {
+        // Process outgoing transfers
+        for await (const _transfer of transfers) {
             let createdDate: Date | null = null;
+            // Wait for the transfer to be confirmed and use latest transfer inforamtion
+            const transfer = await _transfer.wait();
             const txHash = transfer.getTransactionHash();
             const tx = transfer.getTransaction();
 
@@ -42,8 +49,11 @@ export async function GET(request: NextRequest) {
             } else if (txHash) {
                 createdDate = await fetchTxTimestamp(txHash);
             }
+
+            // Skip transfers where we couldn't get a valid timestamp
             if (!createdDate) {
-                createdDate = new Date();
+                console.warn(`Could not get timestamp for transfer ${txHash || 'unknown'}`);
+                continue;
             }
 
             transferActivities.push({
@@ -53,8 +63,68 @@ export async function GET(request: NextRequest) {
                 asset: transfer.getAssetId(),
                 status: transfer.getStatus(),
                 address: transfer.getDestinationAddressId(),
-                transactionHash: transfer.getTransactionLink() || null,
+                transactionHash: transfer.getTransactionHash() || null,
+                direction: transfer.getDestinationAddressId() === address.getId() ? "IN" : "OUT"
             });
+        }
+
+        // Get incoming USDC transfers from transactions
+        const txResp = await address.listTransactions({ limit: 50 });
+        const allTx = txResp.data;
+
+        const usdcContract = process.env.NEXT_APP_ENV === "production"
+            ? tokenAddresses.USDC["base-mainnet"]
+            : tokenAddresses.USDC["base-sepolia"];
+
+        for (const tx of allTx) {
+            const status = tx.getStatus();
+            if (status !== TransactionStatus.COMPLETE) {
+                continue;
+            }
+
+            const content = tx.content();
+            if (!content || !("token_transfers" in content)) {
+                continue;
+            }
+
+            const { token_transfers } = content as any;
+            if (!Array.isArray(token_transfers)) {
+                continue;
+            }
+
+            for (const t of token_transfers) {
+                if (
+                    t.contract_address?.toLowerCase() === usdcContract.toLowerCase() &&
+                    t.to_address?.toLowerCase() === address.getId().toLowerCase()
+                ) {
+                    const rawValue = parseFloat(t.value);
+                    const decimals = 6;
+                    const amount = rawValue / Math.pow(10, decimals);
+
+                    let createdDate: Date | null = null;
+                    const txHash = tx.getTransactionHash();
+
+                    if (txHash) {
+                        createdDate = await fetchTxTimestamp(txHash);
+                    }
+
+                    if (!createdDate) {
+                        console.warn(`Could not get timestamp for USDC transfer ${txHash || 'unknown'}`);
+                        continue;
+                    }
+
+                    transferActivities.push({
+                        type: "transfer",
+                        timestamp: createdDate.getTime(),
+                        amount,
+                        asset: "USDC",
+                        status: "COMPLETE",
+                        address: t.from_address,
+                        transactionHash: txHash || null,
+                        direction: "IN"
+                    });
+                }
+            }
         }
 
         const allPaymentActivities: PaymentActivity[] = [];
@@ -73,6 +143,7 @@ export async function GET(request: NextRequest) {
                     transactionHash: pay.transactionHash || null,
                     name: pay.name || inv.name,
                     email: pay.email || inv.email,
+                    direction: "IN"
                 });
             }
         }
@@ -93,17 +164,17 @@ export async function GET(request: NextRequest) {
                     transactionHash: ses.payment.transactionHash || null,
                     name: ses.payment.name || ses.name,
                     email: ses.payment.email || ses.email,
+                    direction: "IN"
                 });
             }
         }
 
-        allPaymentActivities.sort((a, b) => b.timestamp - a.timestamp);
-        const lastTenPayments = allPaymentActivities.slice(0, 10);
-
-        const combined = [...transferActivities, ...lastTenPayments];
+        // Sort all activities by timestamp in descending order (newest first)
+        const combined = [...transferActivities, ...allPaymentActivities];
         combined.sort((a, b) => b.timestamp - a.timestamp);
 
-        const finalActivity = combined.map((item) => ({
+        // Take only the 10 most recent activities
+        const finalActivity = combined.slice(0, 10).map((item) => ({
             ...item,
             date: new Date(item.timestamp).toISOString(),
         }));

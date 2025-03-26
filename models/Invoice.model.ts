@@ -9,7 +9,7 @@ export const PaymentSchema = new mongoose.Schema({
     name: { type: String },
     email: { type: String },
     amount: { type: Number, required: true },
-    transactionHash: { type: String },
+    transactionHash: { type: String, unique: true },
     paidAt: { type: Date, default: Date.now },
     checkoutSession: { type: mongoose.Schema.Types.ObjectId, ref: "CheckoutSession" }
 });

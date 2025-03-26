@@ -4,6 +4,7 @@ import { UserModel } from '@/models/User.model'
 import connectToDatabase from '@/lib/database'
 import { getWalletFromUser } from '@/lib/coinbase'
 import { supportedAssets } from '@/config'
+import "@/models";
 
 export async function POST(request: NextRequest) {
     try {

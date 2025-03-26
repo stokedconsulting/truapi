@@ -128,6 +128,13 @@
                 }
             }
 
+            .transactionContainer {
+                width: 100%;
+
+                .connectButton {
+                    width: 100%;
+                }
+            }
 
             .qrContainer {
                 display: flex;

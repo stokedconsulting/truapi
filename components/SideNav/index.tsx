@@ -23,7 +23,7 @@ export default function SideNav() {
         {
             name: 'Home',
             icon: HomeIcon,
-            link: '/home'
+            link: '/'
         },
         {
             name: 'Account',
@@ -58,6 +58,11 @@ export default function SideNav() {
         };
     }, []);
 
+    const isActive = (item: string) => {
+        if (pathname === "/" && item.toLowerCase() === "home") return true;
+        return pathname.toLowerCase().includes(item.toLowerCase())
+    }
+
     return (
         <div className={styles.main}>
             <div className={styles.logo}>
@@ -70,7 +75,7 @@ export default function SideNav() {
             </div>
             <div className={styles.menu}>
                 {menu.map((item, index) => (
-                    <Link href={item.link} key={index} className={`${styles.menuItem} ${pathname.toLowerCase().includes(item.name.toLowerCase()) ? styles.active : ''}`}>
+                    <Link href={item.link} key={index} className={`${styles.menuItem} ${isActive(item.name.toLowerCase()) ? styles.active : ''}`}>
                         <item.icon />
                         {item.name}
                     </Link>
@@ -80,7 +85,7 @@ export default function SideNav() {
                 <MenuIcon />
                 <div className={`${styles.menuItems}`}>
                     {menu.map((item, index) => (
-                        <Link href={item.link} key={index} className={`${styles.menuItem} ${pathname.toLowerCase().includes(item.name.toLowerCase()) ? styles.active : ''}`}>
+                        <Link href={item.link} key={index} className={`${styles.menuItem} ${isActive(item.name.toLowerCase()) ? styles.active : ''}`}>
                             <item.icon />
                         </Link>
                     ))}

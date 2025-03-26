@@ -19,7 +19,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (isLoaded) {
-            if (!pathname.includes('payment') && !userId) router.push('/login')
+            if (!pathname.includes('payment') && !userId) router.push('/register')
             // else if (userId) router.push('/home')
         }
     }, [isLoaded])

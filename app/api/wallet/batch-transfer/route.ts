@@ -6,6 +6,7 @@ import { UserModel } from '@/models/User.model'
 import { getWalletFromUser } from '@/lib/coinbase'
 import { supportedAssets } from '@/config'
 import { BatchTransferItem } from '@/types/api.types'
+import "@/models";
 
 export async function POST(request: NextRequest) {
     try {

@@ -8,8 +8,6 @@ import WalletIcon from "@/src/assets/wallet.svg"
 import QRIcon from "@/src/assets/qr.svg"
 import { useMemo, useState } from "react"
 import { formatNumber } from "@/lib/utils"
-import { useAccount } from "wagmi"
-import { useAppKit } from '@reown/appkit/react'
 import { useErc20Transfer } from "@/hooks/useErc20Transfer"
 import { tokenAddresses } from "@/config"
 import { QRCodeSVG } from 'qrcode.react';
@@ -19,21 +17,23 @@ import CountdownTimer from "@/components/CountdownTimer"
 import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"
+import { useCheckInvoicePayment } from "@/hooks/useCheckInvoicePayment"
+import { ConnectWallet } from "@coinbase/onchainkit/wallet"
+import { TransactionDefault } from "@coinbase/onchainkit/transaction"
 
 export default function Page() {
-    const { isConnected } = useAccount();
-    const { open } = useAppKit();
     const { checkoutId } = useParams<{ checkoutId: string }>();
     const [showQr, setShowQr] = useState(false);
 
     const { data: checkoutSession, isFetching: isCheckoutFetching, isError: isCheckoutError } = useGetCheckoutSession(checkoutId);
     const invoice = useMemo(() => checkoutSession?.invoiceId, [checkoutSession]);
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
-    const { transferErc20, isPending: isTransferPending } = useErc20Transfer(
+    const { transferErc20Config } = useErc20Transfer(
         (process.env.NEXT_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),
         checkoutSession?.wallet?.address || undefined,
         amount,
     );
+    useCheckInvoicePayment(undefined, checkoutId, checkoutSession?.status == "paid" ? false : true);
 
     if (isCheckoutError)
         return <ErrorPage statusCode={404} title="Checkout Session Not Found" withDarkMode={false} />
@@ -134,23 +134,16 @@ export default function Page() {
                                     </div>
                                 </div>
                             </div>
-                            {!showQr && <button
-                                className={styles.primaryBttn}
-                                onClick={() => {
-                                    isConnected
-                                        ? transferErc20()
-                                        : open()
-                                }}
-                                disabled={isCheckoutFetching || isTransferPending}
-                            >
-                                {isConnected
-                                    ? `Pay ${amount} USDC`
-                                    : `Connect Wallet`
-                                }
-                            </button>}
+                            {!showQr &&
+                                <div className={styles.transactionContainer}>
+                                    <ConnectWallet className={styles.connectButton}>
+                                        <TransactionDefault calls={[transferErc20Config as any]} />
+                                    </ConnectWallet>
+                                </div>
+                            }
                             <button
                                 className={styles.secondaryBttn}
-                                disabled={isCheckoutFetching || isTransferPending || !checkoutSession}
+                                disabled={isCheckoutFetching || !checkoutSession}
                                 onClick={() => setShowQr(!showQr)}
                             >
                                 {

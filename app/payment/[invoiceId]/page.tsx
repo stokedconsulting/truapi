@@ -8,8 +8,6 @@ import QRIcon from "@/src/assets/qr.svg"
 import { useGetUserInvoices } from "@/hooks/useGetUserInvoices"
 import { useEffect, useMemo, useState } from "react"
 import { formatNumber } from "@/lib/utils"
-import { useAccount } from "wagmi"
-import { useAppKit } from '@reown/appkit/react'
 import { useErc20Transfer } from "@/hooks/useErc20Transfer"
 import { tokenAddresses } from "@/config"
 import { QRCodeSVG } from 'qrcode.react';
@@ -19,10 +17,11 @@ import SuccessCheckIcon from "@/src/assets/success-check.svg";
 import ErrorPage from "next/error"
 import Skeleton from "react-loading-skeleton"
 import { StatusChip } from "@/components/StatusChip"
+import { useCheckInvoicePayment } from "@/hooks/useCheckInvoicePayment"
+import { TransactionDefault } from "@coinbase/onchainkit/transaction"
+import { ConnectWallet } from "@coinbase/onchainkit/wallet"
 
 export default function Page() {
-    const { isConnected } = useAccount();
-    const { open } = useAppKit();
     const { invoiceId } = useParams<{ invoiceId: string }>();
     const router = useRouter();
     const [showQr, setShowQr] = useState(false);
@@ -32,12 +31,14 @@ export default function Page() {
     const { data, isFetching: isInvoiceFetching, isError: isInvoiceError } = useGetUserInvoices(invoiceId || null);
     const invoice = useMemo(() => data ? data.invoices[0] : undefined, [data]);
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
-    const { transferErc20, isPending: isTransferPending } = useErc20Transfer(
+    const { transferErc20Config } = useErc20Transfer(
         (process.env.NEXT_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),
         invoice?.wallet?.address || undefined,
         amount,
     );
     const { createCheckoutSession, isPending: isCheckoutPending, isSuccess: isCheckoutSuccess, data: checkoutData } = useCreateCheckoutSession(invoiceId, name, email);
+
+    useCheckInvoicePayment(invoiceId, undefined, data?.invoices[0].status == "paid" ? false : true);
 
     useEffect(() => {
         if (isCheckoutSuccess && checkoutData)
@@ -134,7 +135,7 @@ export default function Page() {
                     ? <div className={`${styles.container} ${styles.success}`}>
                         <SuccessCheckIcon />
                     </div>
-                    : ['outstanding', 'overdue'].includes(invoice?.status) && <div className={`${styles.container} ${styles.payment}`}>
+                    : ['outstanding', 'overdue', 'partially paid'].includes(invoice?.status) && <div className={`${styles.container} ${styles.payment}`}>
                         <span>Pay with</span>
                         <div className={styles.paymentOption}>
                             {
@@ -159,23 +160,16 @@ export default function Page() {
                                 </div>
                             </div>
                         </div>
-                        {!showQr && <button
-                            className={styles.primaryBttn}
-                            onClick={() => {
-                                isConnected
-                                    ? transferErc20()
-                                    : open()
-                            }}
-                            disabled={isInvoiceFetching || isTransferPending || isCheckoutPending}
-                        >
-                            {isConnected
-                                ? `Pay ${amount} USDC`
-                                : `Connect Wallet`
-                            }
-                        </button>}
+                        {!showQr &&
+                            <div className={styles.transactionContainer}>
+                                <ConnectWallet className={styles.connectButton}>
+                                    <TransactionDefault calls={[transferErc20Config as any]} />
+                                </ConnectWallet>
+                            </div>
+                        }
                         <button
                             className={styles.secondaryBttn}
-                            disabled={isInvoiceFetching || isTransferPending || isCheckoutPending || !data}
+                            disabled={isInvoiceFetching || isCheckoutPending || !data}
                             onClick={() => setShowQr(!showQr)}
                         >
                             {

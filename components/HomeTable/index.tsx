@@ -4,13 +4,15 @@ import React, { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import CustomTable from "../CustomTable";
 import { useGetRecentActivity } from "@/hooks/useGetRecentActivity";
-import { shortAddress } from "@/lib/utils";
+import { formatNumber, shortAddress } from "@/lib/utils";
+import styles from "./HomeTable.module.scss";
+
 interface ActivityRow {
     date: string;
     type: string;
     amount: string;
     nameOrAddress: string;
-    status: string;
+    direction: string;
     transactionHash?: string;
 }
 
@@ -26,6 +28,18 @@ const columns: ColumnDef<ActivityRow>[] = [
         cell: ({ getValue }) => getValue(),
     },
     {
+        accessorKey: "direction",
+        header: "Direction",
+        cell: ({ getValue }) => {
+            const direction = getValue() as string;
+            return (
+                <span className={`${styles.direction} ${styles[direction.toLowerCase()]}`}>
+                    {direction}
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: "amount",
         header: "Amount",
         cell: ({ getValue }) => getValue(),
@@ -33,11 +47,6 @@ const columns: ColumnDef<ActivityRow>[] = [
     {
         accessorKey: "nameOrAddress",
         header: "Name / Address",
-        cell: ({ getValue }) => getValue(),
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
         cell: ({ getValue }) => getValue(),
     },
 ];
@@ -50,17 +59,16 @@ export default function RecentActivityTable() {
         return activity.map((item) => {
             const dateStr = new Date(item.timestamp as number).toLocaleString();
             const assetStr = item.asset || "";
-            const amountStr = `${(item.amount || 0).toFixed(2)} ${assetStr.toUpperCase()}`;
+            const amountStr = `${formatNumber(item.amount || 0)} ${assetStr.toUpperCase()}`;
             // @ts-ignore
             let nameOrAddress = item.name || item.email || shortAddress(item.address, 10) || "N/A";
-            const statusStr = item.status || "";
 
             return {
                 date: dateStr,
                 type: item.type.toUpperCase(),
                 amount: amountStr,
                 nameOrAddress,
-                status: statusStr,
+                direction: item.direction,
                 transactionHash: item.transactionHash || undefined,
             };
         });

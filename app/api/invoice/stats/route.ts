@@ -4,6 +4,7 @@ import connectToDatabase from '@/lib/database'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
 import mongoose from 'mongoose'
+import "@/models";
 
 export async function GET(request: NextRequest) {
     try {

@@ -1,0 +1,11 @@
+@use "../../styles/variables.scss" as *;
+
+.direction {
+    &.in {
+        color: #22c55e; // green-500
+    }
+    
+    &.out {
+        color: #ef4444; // red-500
+    }
+} 

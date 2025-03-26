@@ -128,12 +128,19 @@
                         background: #FFFFFF;
                         border: 1px solid #CDCDCD;
                         border-radius: 8px;
-                    flex: 1 1 auto;
-                    width: 100%;
+                        flex: 1 1 auto;
+                        width: 100%;
                     }
                 }
             }
 
+            .transactionContainer {
+                width: 100%;
+
+                .connectButton {
+                    width: 100%;
+                }
+            }
 
             .qrContainer {
                 display: flex;

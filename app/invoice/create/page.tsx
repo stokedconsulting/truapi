@@ -3,14 +3,14 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from "react"
 import MinusCircleIcon from "@/src/assets/minus-circle.svg"
+import InfoIcon from "@/src/assets/info.svg"
 import styles from "./CreateInvoice.module.scss"
 import { useCreateInvoice } from "@/hooks/useCreateInvoice"
 import { InvoiceItem } from "@/types/api.types"
 import { useGetUserInvoices } from '@/hooks/useGetUserInvoices'
 import Dropdown, { OptionType } from '@/components/Dropdown'
 import { StatusChip } from '@/components/StatusChip';
-
-// @todo - success redirect
+import Tooltip from '@/components/Tooltip';
 
 export default function Page() {
     const searchParams = useSearchParams()
@@ -19,7 +19,7 @@ export default function Page() {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [paymentCollection, setPaymentCollection] = useState(paymentCollectionOptions[0]);
     const [rows, setRows] = useState<InvoiceItem[]>([{ itemName: '', price: '' }]);
     const [isDisabled, setIsDisabled] = useState(false);
@@ -81,7 +81,7 @@ export default function Page() {
                 }
                 {/* NAME */}
                 <div className={styles.columnContainer}>
-                    <span className={styles.title}>Name</span>
+                    <span className={styles.title}>Recipient (Company or Name)</span>
                     <input type="text" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>
                 {/* Email */}
@@ -91,13 +91,23 @@ export default function Page() {
                 </div>
                 {/* Payment Collection */}
                 <div className={styles.columnContainer}>
-                    <span className={styles.title}>Payment Collection</span>
+                    <span className={styles.title}>
+                        Payment Collection
+                        <Tooltip content={
+                            <ul>
+                                <li>One-time payment: Accept a single payment from the recipient. Suitable for custom orders.</li>
+                                <li>Multi-use payment: Accept multiple payments from any number of recipients. Suitable for fixed price services.</li>
+                            </ul>
+                        }>
+                            <InfoIcon />
+                        </Tooltip>
+                    </span>
                     <Dropdown options={paymentCollectionOptions} selected={paymentCollection} onChange={(option) => setPaymentCollection(option)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>
                 {/* Due Date */}
                 {(paymentCollection.name == "one-time") && <div className={styles.columnContainer}>
                     <span className={styles.title}>Due Date</span>
-                    <input type="date" value={date} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                    <input type="date" value={date} min={new Date().toISOString().split('T')[0]} onChange={(event) => setDate(event.target.value)} disabled={isPending || isInvoiceFetching || isDisabled} />
                 </div>}
                 {/* Receive Payments In */}
                 <div className={styles.columnContainer}>
@@ -106,17 +116,17 @@ export default function Page() {
                 </div>
                 {/* Invoice Items */}
                 <div className={styles.columnContainer}>
-                    <span className={styles.title}>Invoices Items</span>
+                    <span className={styles.title}>Invoice Line Item</span>
                     <table>
                         <tbody>
                             {rows.map((row, index) => {
                                 return <tr key={index}>
                                     <td>
-                                        <input type="text" name="itemName" value={row.itemName} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                                        <input type="text" name="itemName" placeholder='ex: Consulting Services' value={row.itemName} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
                                     </td>
                                     <td>
                                         <div className={styles.amountCell}>
-                                            <input type="number" name="price" value={row.price} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
+                                            <input type="number" name="price" placeholder='Amount' value={row.price} onChange={(e) => handleRowInputChange(index, e)} disabled={isPending || isInvoiceFetching || isDisabled} />
 
                                             {(index > 0 && !isDisabled) &&
                                                 <button type="button" onClick={() => removeRow(index)} disabled={isPending || isInvoiceFetching || isDisabled}>
