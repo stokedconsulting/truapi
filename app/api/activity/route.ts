@@ -33,8 +33,10 @@ export async function GET(request: NextRequest) {
 
         const transferActivities: TransferActivity[] = [];
 
-        for (const transfer of transfers) {
+        for await (const _transfer of transfers) {
             let createdDate: Date | null = null;
+            // Wait for the transfer to be confirmed and use latest transfer inforamtion
+            const transfer = await _transfer.wait();
             const txHash = transfer.getTransactionHash();
             const tx = transfer.getTransaction();
 
@@ -43,8 +45,11 @@ export async function GET(request: NextRequest) {
             } else if (txHash) {
                 createdDate = await fetchTxTimestamp(txHash);
             }
+
+            // Skip transfers where we couldn't get a valid timestamp
             if (!createdDate) {
-                createdDate = new Date();
+                console.warn(`Could not get timestamp for transfer ${txHash || 'unknown'}`);
+                continue;
             }
 
             transferActivities.push({
@@ -54,7 +59,7 @@ export async function GET(request: NextRequest) {
                 asset: transfer.getAssetId(),
                 status: transfer.getStatus(),
                 address: transfer.getDestinationAddressId(),
-                transactionHash: transfer.getTransactionLink() || null,
+                transactionHash: transfer.getTransactionHash() || null,
             });
         }
 
@@ -98,16 +103,17 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        allPaymentActivities.sort((a, b) => b.timestamp - a.timestamp);
-        const lastTenPayments = allPaymentActivities.slice(0, 10);
-
-        const combined = [...transferActivities, ...lastTenPayments];
+        // Sort all activities by timestamp in descending order (newest first)
+        const combined = [...transferActivities, ...allPaymentActivities];
         combined.sort((a, b) => b.timestamp - a.timestamp);
 
-        const finalActivity = combined.map((item) => ({
+        // Take only the 10 most recent activities
+        const finalActivity = combined.slice(0, 10).map((item) => ({
             ...item,
             date: new Date(item.timestamp).toISOString(),
         }));
+
+        console.log(finalActivity);
 
         return NextResponse.json({ activity: finalActivity }, { status: 200 });
     } catch (error: any) {

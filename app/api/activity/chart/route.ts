@@ -126,7 +126,8 @@ export async function GET(request: NextRequest) {
             if (!pageResp.hasMore) break;
             nextPage = pageResp.nextPage;
         } while (true);
-        for (const transfer of allTransfers) {
+        for await (const _transfer of allTransfers) {
+            const transfer = await _transfer.wait();
             const txHash = transfer.getTransactionHash();
             let createdDate: Date | null = null;
 
