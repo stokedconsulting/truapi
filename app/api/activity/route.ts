@@ -7,6 +7,8 @@ import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { getWalletFromUser } from "@/lib/coinbase";
 import { fetchTxTimestamp } from "@/lib/viem";
 import { PaymentActivity, TransferActivity } from "@/types/api.types";
+import { tokenAddresses } from "@/config";
+import { TransactionStatus } from "@coinbase/coinbase-sdk";
 import "@/models";
 
 // @todo - fix sorting, older transfers show up at the start and new invoice payments at the bottom
@@ -28,11 +30,13 @@ export async function GET(request: NextRequest) {
         const wallet = await getWalletFromUser(user);
         const address = await wallet.getDefaultAddress();
 
+        // Get outgoing transfers
         const transfersResp = await address.listTransfers({ limit: 10 });
         const transfers = transfersResp.data;
 
         const transferActivities: TransferActivity[] = [];
 
+        // Process outgoing transfers
         for await (const _transfer of transfers) {
             let createdDate: Date | null = null;
             // Wait for the transfer to be confirmed and use latest transfer inforamtion
@@ -62,6 +66,65 @@ export async function GET(request: NextRequest) {
                 transactionHash: transfer.getTransactionHash() || null,
                 direction: transfer.getDestinationAddressId() === address.getId() ? "IN" : "OUT"
             });
+        }
+
+        // Get incoming USDC transfers from transactions
+        const txResp = await address.listTransactions({ limit: 50 });
+        const allTx = txResp.data;
+
+        const usdcContract = process.env.NEXT_APP_ENV === "production"
+            ? tokenAddresses.USDC["base-mainnet"]
+            : tokenAddresses.USDC["base-sepolia"];
+
+        for (const tx of allTx) {
+            const status = tx.getStatus();
+            if (status !== TransactionStatus.COMPLETE) {
+                continue;
+            }
+
+            const content = tx.content();
+            if (!content || !("token_transfers" in content)) {
+                continue;
+            }
+
+            const { token_transfers } = content as any;
+            if (!Array.isArray(token_transfers)) {
+                continue;
+            }
+
+            for (const t of token_transfers) {
+                if (
+                    t.contract_address?.toLowerCase() === usdcContract.toLowerCase() &&
+                    t.to_address?.toLowerCase() === address.getId().toLowerCase()
+                ) {
+                    const rawValue = parseFloat(t.value);
+                    const decimals = 6;
+                    const amount = rawValue / Math.pow(10, decimals);
+
+                    let createdDate: Date | null = null;
+                    const txHash = tx.getTransactionHash();
+
+                    if (txHash) {
+                        createdDate = await fetchTxTimestamp(txHash);
+                    }
+
+                    if (!createdDate) {
+                        console.warn(`Could not get timestamp for USDC transfer ${txHash || 'unknown'}`);
+                        continue;
+                    }
+
+                    transferActivities.push({
+                        type: "transfer",
+                        timestamp: createdDate.getTime(),
+                        amount,
+                        asset: "USDC",
+                        status: "COMPLETE",
+                        address: t.from_address,
+                        transactionHash: txHash || null,
+                        direction: "IN"
+                    });
+                }
+            }
         }
 
         const allPaymentActivities: PaymentActivity[] = [];

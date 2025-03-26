@@ -6,6 +6,8 @@ import { getWalletFromUser } from "@/lib/coinbase";
 import { InvoiceModel } from "@/models/Invoice.model";
 import { CheckoutSessionModel } from "@/models/CheckoutSession.model";
 import { fetchTxTimestamp } from "@/lib/viem";
+import { tokenAddresses } from "@/config";
+import { TransactionStatus } from "@coinbase/coinbase-sdk";
 import "@/models";
 
 // Helper to format date keys
@@ -152,6 +154,67 @@ export async function GET(request: NextRequest) {
                     volumeMap.set(key, oldVal + amt);
                 } else {
                     volumeMap.set(key, amt);
+                }
+            }
+        }
+
+        // Get incoming USDC transfers from transactions
+        const txResp = await address.listTransactions({ limit: 50 });
+        const allTx = txResp.data;
+
+        const usdcContract = process.env.NEXT_APP_ENV === "production"
+            ? tokenAddresses.USDC["base-mainnet"]
+            : tokenAddresses.USDC["base-sepolia"];
+
+        for (const tx of allTx) {
+            const status = tx.getStatus();
+            if (status !== TransactionStatus.COMPLETE) {
+                continue;
+            }
+
+            const content = tx.content();
+            if (!content || !("token_transfers" in content)) {
+                continue;
+            }
+
+            const { token_transfers } = content as any;
+            if (!Array.isArray(token_transfers)) {
+                continue;
+            }
+
+            for (const t of token_transfers) {
+                if (
+                    t.contract_address?.toLowerCase() === usdcContract.toLowerCase() &&
+                    t.to_address?.toLowerCase() === address.getId().toLowerCase()
+                ) {
+                    const rawValue = parseFloat(t.value);
+                    const decimals = 6;
+                    const amount = rawValue / Math.pow(10, decimals);
+
+                    let createdDate: Date | null = null;
+                    const txHash = tx.getTransactionHash();
+
+                    if (txHash) {
+                        createdDate = await fetchTxTimestamp(txHash);
+                    }
+
+                    if (!createdDate) {
+                        console.warn(`Could not get timestamp for USDC transfer ${txHash || 'unknown'}`);
+                        continue;
+                    }
+
+                    if (createdDate >= timeframeStart) {
+                        grossVolume += amount;
+                        totalPayments++;
+
+                        const key = formatKey(createdDate, timeFilter);
+                        const oldVal = volumeMap.get(key);
+                        if (typeof oldVal === "number") {
+                            volumeMap.set(key, oldVal + amount);
+                        } else {
+                            volumeMap.set(key, amount);
+                        }
+                    }
                 }
             }
         }
