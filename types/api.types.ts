@@ -43,6 +43,7 @@ export interface TransferActivity {
     status?: string;
     address?: string;
     transactionHash?: string | null;
+    direction: "IN" | "OUT";
 }
 
 export interface PaymentActivity {
@@ -55,6 +56,7 @@ export interface PaymentActivity {
     transactionHash?: string | null;
     name?: string;
     email?: string;
+    direction: "IN" | "OUT";
 }
 
 export type GetUserActivityResponse = {

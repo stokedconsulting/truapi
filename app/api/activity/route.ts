@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
                 status: transfer.getStatus(),
                 address: transfer.getDestinationAddressId(),
                 transactionHash: transfer.getTransactionHash() || null,
+                direction: transfer.getDestinationAddressId() === address.getId() ? "IN" : "OUT"
             });
         }
 
@@ -79,6 +80,7 @@ export async function GET(request: NextRequest) {
                     transactionHash: pay.transactionHash || null,
                     name: pay.name || inv.name,
                     email: pay.email || inv.email,
+                    direction: "IN"
                 });
             }
         }
@@ -99,6 +101,7 @@ export async function GET(request: NextRequest) {
                     transactionHash: ses.payment.transactionHash || null,
                     name: ses.payment.name || ses.name,
                     email: ses.payment.email || ses.email,
+                    direction: "IN"
                 });
             }
         }
