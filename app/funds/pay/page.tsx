@@ -179,71 +179,75 @@ export default function Page() {
                 <h3>Pay to</h3>
                 <form className={styles.formRows} onSubmit={handleSubmit} onReset={handleCancel}>
                     <table className={styles.formTable}>
-                        <tr>
-                            <th>Recipient</th>
-                            <th>{selectedToken.symbol}</th>
-                        </tr>
-                        {rows.map((row, index) => {
-                            return (<tr>
-                                {/* RECIPIENT */}
-                                <td>
-                                    {step == 0 && <div className={styles.inputContainer}>
-                                        <input
-                                            type="text"
-                                            name="destination"
-                                            placeholder="ENS/0xAddress"
-                                            value={row.destination}
-                                            required
-                                            onChange={(e) => handleInputChange(index, e)}
-                                        />
-                                    </div>}
-                                    {(step == 1 || step == 2) &&
-                                        <div
-                                            className={styles.inputContainer + " " + styles.explorer}
-                                            style={(batchPayoutData?.transferStatus[index].status === "failed") ? { "color": "red" } : {}}
-                                        >
-                                            {step === 2 && batchPayoutData?.transferStatus
-                                                ? (batchPayoutData.transferStatus[index].status === "failed"
-                                                    ? <FailIcon />
-                                                    : (<a href={batchPayoutData.transferStatus[index].transactionLink} target="_blank" rel="noopener noreferrer">
-                                                        <Image src={"/assets/basescan-logo.png"} width={24} height={24} alt={"basescan"} />
-                                                    </a>))
-                                                : null}
-                                            {(step == 1 || step == 2) &&
-                                                isAddress(rows[index].destination) ? shortAddress(rows[index].destination, 10) : rows[index].destination
-                                            }
-                                        </div>}
-                                </td>
-                                {/* AMOUNT */}
-                                <td>
-                                    <div className={styles.amountCell}>
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>{selectedToken.symbol}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rows.map((row, index) => {
+                                return (<tr>
+                                    {/* RECIPIENT */}
+                                    <td>
                                         {step == 0 && <div className={styles.inputContainer}>
                                             <input
-                                                type="number"
-                                                name="amount"
-                                                placeholder="Amount"
-                                                value={row.amount}
+                                                type="text"
+                                                name="destination"
+                                                placeholder="ENS/0xAddress"
+                                                value={row.destination}
                                                 required
                                                 onChange={(e) => handleInputChange(index, e)}
                                             />
                                         </div>}
-                                        {(step == 1 || step == 2) && <div className={styles.inputContainer}>
-                                            <span
-                                                className={`${styles.amounts} ${step == 1 ? styles.confirmed : styles.success}`}
-                                                style={batchPayoutData?.transferStatus[index].status === "failed" ? { "color": "red" } : {}}
+                                        {(step == 1 || step == 2) &&
+                                            <div
+                                                className={styles.inputContainer + " " + styles.explorer}
+                                                style={(batchPayoutData?.transferStatus[index].status === "failed") ? { "color": "red" } : {}}
                                             >
-                                                {row.amount}
-                                            </span>
-                                        </div>}
+                                                {step === 2 && batchPayoutData?.transferStatus
+                                                    ? (batchPayoutData.transferStatus[index].status === "failed"
+                                                        ? <FailIcon />
+                                                        : (<a href={batchPayoutData.transferStatus[index].transactionLink} target="_blank" rel="noopener noreferrer">
+                                                            <Image src={"/assets/basescan-logo.png"} width={24} height={24} alt={"basescan"} />
+                                                        </a>))
+                                                    : null}
+                                                {(step == 1 || step == 2) &&
+                                                    isAddress(rows[index].destination) ? shortAddress(rows[index].destination, 10) : rows[index].destination
+                                                }
+                                            </div>}
+                                    </td>
+                                    {/* AMOUNT */}
+                                    <td>
+                                        <div className={styles.amountCell}>
+                                            {step == 0 && <div className={styles.inputContainer}>
+                                                <input
+                                                    type="number"
+                                                    name="amount"
+                                                    placeholder="Amount"
+                                                    value={row.amount}
+                                                    required
+                                                    onChange={(e) => handleInputChange(index, e)}
+                                                />
+                                            </div>}
+                                            {(step == 1 || step == 2) && <div className={styles.inputContainer}>
+                                                <span
+                                                    className={`${styles.amounts} ${step == 1 ? styles.confirmed : styles.success}`}
+                                                    style={batchPayoutData?.transferStatus[index].status === "failed" ? { "color": "red" } : {}}
+                                                >
+                                                    {row.amount}
+                                                </span>
+                                            </div>}
 
-                                        {(step == 0 && index > 0) &&
-                                            <button type="button" className={`${styles.addBttn}`} onClick={() => removeRow(index)}>
-                                                <MinusCircleIcon />
-                                            </button>}
-                                    </div>
-                                </td>
-                            </tr>)
-                        })}
+                                            {(step == 0 && index > 0) &&
+                                                <button type="button" className={`${styles.addBttn}`} onClick={() => removeRow(index)}>
+                                                    <MinusCircleIcon />
+                                                </button>}
+                                        </div>
+                                    </td>
+                                </tr>)
+                            })}
+                        </tbody>
                     </table>
                     {(step == 1 || step == 2) &&
                         <div className={styles.row}>

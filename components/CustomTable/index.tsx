@@ -116,8 +116,8 @@ function CustomTable<T>({
                             ? [...Array(5).keys()].map((item, index) => {
                                 return (
                                     <tr key={index}>
-                                        {table.getFlatHeaders().map(() =>
-                                            <td>
+                                        {table.getFlatHeaders().map((header, headerIndex) =>
+                                            <td key={`${index}-${headerIndex}`}>
                                                 <Skeleton width={100} />
                                             </td>
                                         )}
