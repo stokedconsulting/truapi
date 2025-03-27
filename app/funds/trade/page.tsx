@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { formatNumber } from "@/lib/utils";
 import Dropdown, { OptionType } from "@/components/Dropdown";
 import { useTradeAsset } from "@/hooks/useTradeAsset";
+import { DevelopmentBlocker } from "@/components/DevelopmentBlocker";
 
 // @todo - Skeleton Loaders
 
@@ -69,6 +70,7 @@ export default function Page() {
 
     return (
         <div className={styles.main}>
+            <DevelopmentBlocker pageName="Trade" />
             <div className={styles.container}>
                 {/* TRADE OUT */}
                 <div className={styles.selectionContainer}>
