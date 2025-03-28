@@ -7,8 +7,6 @@ import styles from "./Accounts.module.scss"
 import { addressExplorerLink, getUserImage, shortAddress } from "@/lib/utils"
 import EmailIcon from "@/src/assets/email.svg"
 
-// @todo - Skeleton Loader
-
 export default function Page() {
     const { user, balances } = useAppUser();
 

@@ -11,8 +11,6 @@ import { tokenAddresses } from "@/config";
 import { TransactionStatus } from "@coinbase/coinbase-sdk";
 import "@/models";
 
-// @todo - fix sorting, older transfers show up at the start and new invoice payments at the bottom
-
 export async function GET(request: NextRequest) {
     try {
         const { userId } = getAuth(request);
