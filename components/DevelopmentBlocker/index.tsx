@@ -9,7 +9,7 @@ export const DevelopmentBlocker = ({ pageName }: DevelopmentBlockerProps) => {
     const router = useRouter();
     
     // Only show in development environment
-    if (process.env.NODE_ENV !== 'development') {
+    if (process.env.NEXT_APP_ENV !== 'development') {
         return null;
     }
 
