@@ -37,7 +37,6 @@ export async function POST(request: NextRequest) {
                 seed: encryptedSeed
             }
         })
-        // @review - Mongodb session/transaction setup
         await listenToAddress(addr.getId())
         return NextResponse.json(session, { status: 201 })
     } catch (error: any) {
