@@ -4,12 +4,12 @@ import { base, baseSepolia } from "viem/chains";
 import Image from "next/image";
 
 export const txnExplorerLink = (txHash: string) => {
-    const chain = process.env.NEXT_APP_ENV == "production" ? base : baseSepolia;
+    const chain = process.env.NEXT_PUBLIC_APP_ENV == "production" ? base : baseSepolia;
     return `${chain?.blockExplorers?.default.url}/tx/${txHash}`;
 }
 
 export const addressExplorerLink = (address: string) => {
-    const chain = process.env.NEXT_APP_ENV == "production" ? base : baseSepolia;
+    const chain = process.env.NEXT_PUBLIC_APP_ENV == "production" ? base : baseSepolia;
     return `${chain?.blockExplorers?.default.url}/address/${address}`;
 }
 

@@ -21,7 +21,7 @@ export default function Header() {
             <div className={styles.chainInfo}>
                 <div className={styles.container}>
                     <Image src="/assets/base-logo.png" alt="Base" width={20} height={20} />
-                    <span>{process.env.NEXT_APP_ENV === "production" ? "Base" : "Base Sepolia"}</span>
+                    <span>{process.env.NEXT_PUBLIC_APP_ENV === "production" ? "Base" : "Base Sepolia"}</span>
                 </div>
                 <Link className={styles.container} href={addressExplorerLink(user?.wallet.address || "")} target='_blank'>
                     {shortAddress(user.wallet.address)}

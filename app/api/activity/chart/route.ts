@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
         const txResp = await address.listTransactions({ limit: 50 });
         const allTx = txResp.data;
 
-        const usdcContract = process.env.NEXT_APP_ENV === "production"
+        const usdcContract = process.env.NEXT_PUBLIC_APP_ENV === "production"
             ? tokenAddresses.USDC["base-mainnet"]
             : tokenAddresses.USDC["base-sepolia"];
 

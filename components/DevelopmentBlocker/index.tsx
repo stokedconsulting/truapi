@@ -7,9 +7,11 @@ interface DevelopmentBlockerProps {
 
 export const DevelopmentBlocker = ({ pageName }: DevelopmentBlockerProps) => {
     const router = useRouter();
+
+    console.log(process.env.NEXT_PUBLIC_APP_ENV);
     
     // Only show in development environment
-    if (process.env.NEXT_APP_ENV !== 'development') {
+    if (process.env.NEXT_PUBLIC_APP_ENV !== 'development') {
         return null;
     }
 

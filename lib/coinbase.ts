@@ -42,7 +42,7 @@ const getWalletFromUser = async (user: UserDocument) => {
 const createWallet = async () => {
     const wallet = await Wallet.create({
         networkId:
-            process.env.NEXT_APP_ENV === "production"
+            process.env.NEXT_PUBLIC_APP_ENV === "production"
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia,
         timeoutSeconds: 120,
@@ -61,7 +61,7 @@ const getWalletFromData = async (walletId: string, encryptedSeed: string) => {
             walletId,
             seed,
         },
-        process.env.NEXT_APP_ENV === "production"
+        process.env.NEXT_PUBLIC_APP_ENV === "production"
             ? Coinbase.networks.BaseMainnet
             : Coinbase.networks.BaseSepolia
     );
@@ -75,7 +75,7 @@ const getWalletFromData = async (walletId: string, encryptedSeed: string) => {
 const listenToAddress = async (address: string) => {
     try {
         const networkId =
-            process.env.NEXT_APP_ENV === "production"
+            process.env.NEXT_PUBLIC_APP_ENV === "production"
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
@@ -127,7 +127,7 @@ const listenToAddress = async (address: string) => {
 const unlistenToAddress = async (address: string) => {
     try {
         const networkId =
-            process.env.NEXT_APP_ENV === "production"
+            process.env.NEXT_PUBLIC_APP_ENV === "production"
                 ? Coinbase.networks.BaseMainnet
                 : Coinbase.networks.BaseSepolia;
 
