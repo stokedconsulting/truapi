@@ -29,7 +29,7 @@ export default function Page() {
     const invoice = useMemo(() => checkoutSession?.invoiceId, [checkoutSession]);
     const amount = useMemo(() => invoice?.invoiceItems.reduce((sum, val) => sum + val.price, 0), [invoice]);
     const { transferErc20Config } = useErc20Transfer(
-        (process.env.NEXT_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),
+        (process.env.NEXT_PUBLIC_APP_ENV == "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']),
         checkoutSession?.wallet?.address || undefined,
         amount,
     );
@@ -123,7 +123,7 @@ export default function Page() {
                                     <span>Network</span>
                                     <div className={styles.assetBox}>
                                         <Image src={"/assets/base-logo.png"} width={24} height={24} alt="Bitcoin" />
-                                        <span>{process.env.NEXT_APP_ENV == "production" ? "Base" : "Base Sepolia"}</span>
+                                        <span>{process.env.NEXT_PUBLIC_APP_ENV == "production" ? "Base" : "Base Sepolia"}</span>
                                     </div>
                                 </div>
                                 <div className={styles.assetInfo}>
@@ -153,7 +153,7 @@ export default function Page() {
                                 }
                             </button>
                             {showQr && <div className={styles.qrContainer}>
-                                <QRCodeSVG value={`ethereum:${checkoutSession?.wallet?.address}@${process.env.NEXT_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
+                                <QRCodeSVG value={`ethereum:${checkoutSession?.wallet?.address}@${process.env.NEXT_PUBLIC_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
                                 <div className={styles.addressContainer}>
                                     <span>Address: <input type="text" value={checkoutSession?.wallet?.address || undefined} /></span>
                                 </div>

@@ -47,7 +47,7 @@ export default function Page() {
     return (
         <div className={styles.main}>
             <div className={styles.qrContainer}>
-                <QRCodeSVG value={`ethereum:${user?.wallet.address}@${process.env.NEXT_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
+                <QRCodeSVG value={`ethereum:${user?.wallet.address}@${process.env.NEXT_PUBLIC_APP_ENV === "production" ? base.id : baseSepolia.id}`} />
                 <div className={styles.hr} />
                 <span>Scan QR Code if sending funds from another wallet</span>
             </div>

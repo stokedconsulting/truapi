@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
         const allTx = txResp.data;
 
         const usdcContract =
-            process.env.NEXT_APP_ENV === "production"
+            process.env.NEXT_PUBLIC_APP_ENV === "production"
                 ? tokenAddresses.USDC["base-mainnet"]
                 : tokenAddresses.USDC["base-sepolia"];
 

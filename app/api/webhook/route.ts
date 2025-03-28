@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         if (!toAddr || !txHash || !amount)
             return NextResponse.json({ error: 'Invalid or missing fields' }, { status: 400 })
 
-        if (payload?.contractAddress.toLowerCase() != (process.env.NEXT_APP_ENV === "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']).toLowerCase()) {
+        if (payload?.contractAddress.toLowerCase() != (process.env.NEXT_PUBLIC_APP_ENV === "production" ? tokenAddresses.USDC['base-mainnet'] : tokenAddresses.USDC['base-sepolia']).toLowerCase()) {
             console.log('[POST /api/webhook] Unsupported token, skipping');
             return NextResponse.json({ message: 'Webhook processed' }, { status: 200 });
         }

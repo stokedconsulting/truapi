@@ -11,7 +11,7 @@ export function Providers({ children }: { children: ReactNode }) {
         // Wagmi + ReactQuery Providers created by OnchainKitProvider
         <OnchainKitProvider
             apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-            chain={process.env.NEXT_APP_ENV === "production"
+            chain={process.env.NEXT_PUBLIC_APP_ENV === "production"
                 ? base
                 : baseSepolia}
             config={{ appearance: { theme: 'light' }, wallet: { display: 'modal' } }}

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         const eth = (await wallet.getBalance(Coinbase.assets.Eth)).toNumber()
         let cbeth = 0;
         let cbbtc = 0;
-        if (process.env.NEXT_APP_ENV === "production") {
+        if (process.env.NEXT_PUBLIC_APP_ENV === "production") {
             cbeth = (await wallet.getBalance("cbeth")).toNumber();
             cbbtc = (await wallet.getBalance("0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf")).toNumber();
         }
