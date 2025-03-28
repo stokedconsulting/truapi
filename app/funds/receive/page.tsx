@@ -55,7 +55,7 @@ export default function Page() {
                 <h3>My Portfolio</h3>
                 <div className={styles.tokens}>
                     {tokens.map((token, index) => {
-                        return <div className={styles.token}>
+                        return <div key={token.symbol} className={styles.token}>
                             <div className={styles.tokenInfoContainer}>
                                 {/* IMG */}
                                 <div className={styles.tokenImg}>
