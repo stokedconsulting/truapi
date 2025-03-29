@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+<img src="public/assets/superpay-logo.svg" alt="SuperPay Logo" width="200"/>
+<hr/>
+
+![Next.js](https://img.shields.io/badge/-Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/-TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![SCSS](https://img.shields.io/badge/-SCSS-cd6799?style=for-the-badge&logo=SASS&logoColor=white)
+![Coinbase](https://img.shields.io/badge/Coinbase-0052FF?style=for-the-badge&logo=Coinbase&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+
+
+A full-stack Next.js application for managing crypto payments and invoices using Coinbase's infrastructure.
+
+## Prerequisites
+
+- Git
+- Node.js (v18 or higher)
+- MongoDB
+- AWS Account (for SES)
+- Coinbase Developer Platform (CDP) Account
+- Clerk Account
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# MongoDB
+MONGODB_URI=your_mongodb_uri
+
+# Coinbase
+CDP_API_KEY_NAME=your_coinbase_api_key_name
+CDP_API_PRIVATE_KEY=your_coinbase_private_key
+NEXT_PUBLIC_APP_ENV=development # or production
+
+# AWS
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=your_aws_region
+
+# Webhook
+NEXT_PUBLIC_WEBHOOK_URL=your_webhook_url
+```
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. Clone the repository:
+```sh
+git clone https://github.com/heimlabs/coinbase-superpay.git
+cd coinbase-superpay
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```sh
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up your environment variables as described above.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the development server:
+```sh
+pnpm dev
+```
 
-## Learn More
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## Building for Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+pnpm build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To start the production server:
+```sh
+pnpm start
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `/app` - Next.js app router pages and API routes
+- `/models` - MongoDB models
+- `/lib` - Utility functions and service integrations
+- `/public` - Static assets
+- `/src/assets` - SVG icons and other assets
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## System Architecture
+
+For detailed information about the system architecture and user flows, please refer to our [DIAGRAMS.md](./DIAGRAMS.md) file.
+
+## Features
+
+- 🔐 Secure authentication with Clerk
+- 💰 Crypto wallet management
+- 💸 Asset transfers and trading
+- 📄 Invoice creation and management
+- 📧 Email notifications via AWS SES
+- 🔄 Webhook handling for payment events
+- 📱 Responsive design
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
