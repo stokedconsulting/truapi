@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuth } from '@clerk/nextjs/server'
+import { getAuth, clerkClient } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
 import { InvoiceModel } from '@/models/Invoice.model'
 import { UserModel } from '@/models/User.model'
@@ -16,9 +16,15 @@ export async function POST(request: NextRequest) {
         if (!userId)
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         await connectToDatabase()
-        const user = await UserModel.findOne({ userId })
+
+        const _user = await (await clerkClient()).users.getUser(userId)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        const user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress })
         if (!user)
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
         const body = await request.json()
         const {
             name,
@@ -92,7 +98,11 @@ export async function GET(request: NextRequest) {
         }
 
         // Otherwise, userId is guaranteed to exist, so fetch all invoices for that user with pagination & counts
-        const user = await UserModel.findOne({ userId })
+        const _user = await (await clerkClient()).users.getUser(userId as string)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        const user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress })
         if (!user)
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
@@ -133,7 +143,11 @@ export async function PUT(request: NextRequest) {
 
         await connectToDatabase()
 
-        const user = await UserModel.findOne({ userId })
+        const _user = await (await clerkClient()).users.getUser(userId)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        const user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress })
         if (!user)
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
 

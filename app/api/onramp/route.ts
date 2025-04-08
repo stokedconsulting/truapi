@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuth } from '@clerk/nextjs/server'
+import { getAuth, clerkClient } from '@clerk/nextjs/server'
 import connectToDatabase from '@/lib/database'
 import { UserModel } from '@/models/User.model'
 import "@/models";
@@ -13,7 +13,11 @@ export async function GET(request: NextRequest) {
         if (!userId)
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const user = await UserModel.findOne({ userId })
+        const _user = await (await clerkClient()).users.getUser(userId)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        const user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress })
         if (!user || !user.wallet?.address)
             return NextResponse.json({ error: 'User or Wallet not found' }, { status: 404 })
 

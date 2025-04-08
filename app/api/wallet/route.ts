@@ -14,20 +14,23 @@ export async function GET(request: NextRequest) {
 
         await connectToDatabase();
 
-        let user = await UserModel.findOne({ userId }) as UserDocument
         const _user = await (await clerkClient()).users.getUser(userId)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        let user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress }) as UserDocument
 
         if (!user) {
             const _name =
                 (!_user.firstName && !_user.lastName)
-                    ? _user.primaryEmailAddress?.emailAddress.split('@')[0]
+                    ? _user.primaryEmailAddress.emailAddress.split('@')[0]
                     : (_user.firstName || '') +
                     (_user.lastName ? ' ' + _user.lastName : '')
 
             user = new UserModel({
                 userId: _user.id,
                 name: _name,
-                email: _user.primaryEmailAddress?.emailAddress,
+                email: _user.primaryEmailAddress.emailAddress,
                 imageUrl: _user.imageUrl,
                 wallet: { rewards: [] },
                 faucet: {},
@@ -40,7 +43,7 @@ export async function GET(request: NextRequest) {
                 user = await coinbase.createWalletForUser(user)
             } catch (err) {
                 console.error(
-                    `[controllers/wallet/getUser] Failed to create wallet | User: ${user?.userId}`
+                    `[controllers/wallet/getUser] Failed to create wallet | User: ${user?.email}`
                 )
                 console.error(err)
             }

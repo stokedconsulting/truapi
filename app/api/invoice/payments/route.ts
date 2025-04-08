@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import connectToDatabase from "@/lib/database";
 import { UserModel } from "@/models/User.model";
 import { InvoiceModel } from "@/models/Invoice.model";
@@ -14,16 +14,19 @@ export async function GET(request: NextRequest) {
         }
 
         await connectToDatabase();
+
+        const _user = await (await clerkClient()).users.getUser(userId)
+        if (!_user.primaryEmailAddress?.emailAddress)
+            return NextResponse.json({ error: 'User email not found' }, { status: 400 })
+
+        const user = await UserModel.findOne({ email: _user.primaryEmailAddress.emailAddress });
+        if (!user)
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
         const searchParams = request.nextUrl.searchParams;
         const invoiceId = searchParams.get('invoiceId');
         if (!invoiceId) {
             return NextResponse.json({ error: 'Missing invoiceId' }, { status: 400 });
-        }
-
-        // Validate user
-        const user = await UserModel.findOne({ userId });
-        if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
         // Find invoice
