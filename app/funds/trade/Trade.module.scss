@@ -43,7 +43,7 @@
             .left {
                 display: flex;
                 flex-direction: column;
-                align-items: start;
+                align-items: flex-start;
                 justify-content: center;
                 gap: 10px;
 
@@ -63,7 +63,7 @@
                 .valueContainer {
                     display: flex;
                     flex-direction: column;
-                    align-items: start;
+                    align-items: flex-start;
                     justify-content: center;
                     font-size: 14px;
                     color: $gray-medium
@@ -73,7 +73,7 @@
             .right {
                 display: flex;
                 flex-direction: column;
-                align-items: end;
+                align-items: flex-end;
                 justify-content: center;
                 gap: 10px;
 
@@ -84,7 +84,7 @@
                 .balanceContainer {
                     display: flex;
                     align-items: center;
-                    justify-content: end;
+                    justify-content: flex-end;
                     gap: 10px;
 
                     .value {

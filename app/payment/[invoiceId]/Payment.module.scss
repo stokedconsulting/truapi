@@ -37,7 +37,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                align-items: start;
+                align-items: flex-start;
                 width: 100%;
                 gap: 5px;
                 overflow: hidden;
@@ -51,7 +51,7 @@
                 .amountContainer {
                     display: flex;
                     flex-direction: row;
-                    justify-content: start;
+                    justify-content: flex-start;
                     align-items: center;
                     width: 100%;
                     font-size: 24px;
@@ -86,13 +86,13 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: start;
+            align-items: flex-start;
             width: 100%;
 
             .paymentOption {
                 display: flex;
                 align-items: center;
-                justify-content: start;
+                justify-content: flex-start;
                 gap: 5px;
             }
 
@@ -108,7 +108,7 @@
                 .assetInfo {
                     display: flex;
                     flex-direction: column;
-                    align-items: start;
+                    align-items: flex-start;
                     justify-content: center;
                     text-wrap: nowrap;
                     flex: 1 1 auto;

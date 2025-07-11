@@ -11,7 +11,7 @@
     .header {
         display: flex;
         flex-direction: column;
-        align-items: start;
+        align-items: flex-start;
         justify-content: center;
         width: 100%;
         gap: 10px;
@@ -46,7 +46,7 @@
                 .stat {
                     display: flex;
                     flex-direction: column;
-                    align-items: start;
+                    align-items: flex-start;
                     justify-content: center;
                     flex: 1 1 auto;
 
