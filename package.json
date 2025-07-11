@@ -29,6 +29,7 @@
     "react-loading-skeleton": "^3.5.0",
     "react-toastify": "^11.0.3",
     "recharts": "^2.15.1",
+    "tailwindcss": "3",
     "viem": "^2.23.5",
     "wagmi": "^2.14.12"
   },
@@ -39,6 +40,7 @@
     "@types/papaparse": "^5.3.15",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "pino-pretty": "^13.0.0",
     "sass": "^1.85.1",
     "typescript": "^5"
   },
