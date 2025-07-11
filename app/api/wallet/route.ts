@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getAuth, clerkClient } from '@clerk/nextjs/server'
-import { UserDocument, UserModel } from '@/models/User.model'
 import * as coinbase from '@/lib/coinbase'
 import connectToDatabase from '@/lib/database'
-import "@/models";
+import "@/models"
+import { UserDocument, UserModel } from '@/models/User.model'
+import { clerkClient, getAuth } from '@clerk/nextjs/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
     try {
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
             })
             await user.save()
         }
-
+        console.log(`clerkClient().users.getUser(${userId})`, user);
         if (!user.wallet?.id) {
             try {
                 user = await coinbase.createWalletForUser(user)
