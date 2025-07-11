@@ -65,14 +65,14 @@
     }
 
     .footer {
-        @media (max-width: 1024px) {
-            display: none;
-        }
-
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: start;
+
+        @media (max-width: 1024px) {
+            display: none;
+        }
 
         .footerItem {
             display: flex;

@@ -49,3 +49,4 @@ my-secret.key
 cdp_api_key-*.json
 
 certificates
+.history

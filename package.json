@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "senvn --debug next dev --turbopack",
+    "dev:prod": "NODE_ENV=production senvn -f production --debug next dev --turbopack --experimental-https -p 6061",
+    "dev:local": "senvn --debug next dev --turbopack --experimental-https -p 6051",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -39,5 +41,16 @@
     "@types/react-dom": "^19",
     "sass": "^1.85.1",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@parcel/watcher",
+      "bufferutil",
+      "keccak",
+      "secp256k1",
+      "sharp",
+      "utf-8-validate"
+    ]
   }
 }

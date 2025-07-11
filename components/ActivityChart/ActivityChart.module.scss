@@ -1,4 +1,5 @@
 @use "../../styles/variables.scss" as *;
+@use "sass:color";
 
 .chartContainer {
     width: 100%;
@@ -42,7 +43,7 @@
         }
 
         &:hover {
-            background: lighten($royalBlue, 40%);
+            background: color.adjust($royalBlue, $lightness: 40%);
         }
     }
 
