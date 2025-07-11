@@ -24,7 +24,7 @@
     .outlet {
         display: flex;
         flex-direction: column;
-        justify-content: start;
+        justify-content: flex-start;
         align-items: center;
         max-height: 100vh;
         height: 100vh;
@@ -46,7 +46,7 @@
         .backRow {
             display: flex;
             align-items: center;
-            justify-content: start;
+            justify-content: flex-start;
             width: 100%;
             gap: 10px;
             transition-duration: 0.3s;
